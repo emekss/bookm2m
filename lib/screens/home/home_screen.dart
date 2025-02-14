@@ -1,18 +1,18 @@
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:book_app_m2m/screens/assets/assets_screen.dart';
 import 'package:book_app_m2m/screens/auth/sign_in_screen.dart';
-import 'package:book_app_m2m/screens/books/create_book_screen.dart';
 import 'package:book_app_m2m/screens/books/view_books_screen.dart';
 import 'package:book_app_m2m/screens/challenge_screen/challenge_screen.dart';
 import 'package:book_app_m2m/screens/dashboard/dashboard_screen.dart';
 import 'package:book_app_m2m/screens/family/build_family_screen.dart';
 import 'package:book_app_m2m/screens/family/inspired_community_screen.dart';
+import 'package:book_app_m2m/screens/home/components/book_section.dart';
+import 'package:book_app_m2m/screens/home/widgets/category_box.dart';
 import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:svg_flutter/svg.dart';
-import 'dart:ui';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -205,6 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) => ViewBooksScreen()));
                   break;
                 case 'Log out':
+                  // TODO: Implement actual logging out
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => SignInScreen()));
                   break;
@@ -307,7 +308,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     scrollDirection: Axis.horizontal,
                     itemCount: categories.length,
                     itemBuilder: (context, index) {
-                      return _buildCategoryBox(categories[index]);
+                      return CategoryBox(
+                        category: categories[index],
+                        onPressed: () => _navigateToCategory(
+                            context, categories[index]['route']),
+                      );
                     },
                   ),
                 ),
@@ -360,44 +365,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       const SizedBox(height: 40),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CreateBookScreen(),
-                                  ),
-                                );
-                              },
-                              child: _buildBookCard(
-                                'Create a book',
-                                'Make a book with your \nfavourite legacy questions or \ncreate your own',
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ViewBooksScreen(),
-                                  ),
-                                );
-                              },
-                              child: _buildBookCard(
-                                'View All book',
-                                'Check out all the family \nmembers you have added',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      const BookSection(),
                       const SizedBox(height: 40),
                       const CustomText(
                         text: 'Questions by topic',
@@ -710,81 +678,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildBookCard(String title, String description) {
-    return Container(
-      height: 252,
-      decoration: BoxDecoration(
-        color: const Color.fromRGBO(246, 246, 247, 1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        children: [
-          SizedBox(
-            width: 189,
-            child: Image.asset('assets/images/homebook1.png'),
-          ),
-          const SizedBox(height: 12),
-          CustomText(
-            text: title,
-            color: const Color.fromRGBO(41, 42, 44, 1),
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-          ),
-          const SizedBox(height: 12),
-          CustomText(
-            text: description,
-            color: const Color.fromRGBO(119, 119, 121, 1),
-            fontSize: 10,
-            textAlign: TextAlign.center,
-            fontWeight: FontWeight.w400,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryBox(Map<String, dynamic> category) {
-    return GestureDetector(
-      onTap: () => _navigateToCategory(context, category['route']),
-      child: Container(
-        margin: const EdgeInsets.only(right: 15),
-        height: 86,
-        width: 101,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Stack(
-            children: [
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                child: Container(
-                  color: Colors.white.withOpacity(0.1),
-                ),
-              ),
-              Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      category['icon']!,
-                    ),
-                    const SizedBox(height: 10),
-                    CustomText(
-                      text: category['text']!,
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

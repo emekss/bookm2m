@@ -1,40 +1,29 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+
+import 'package:book_app_m2m/models/full_user_model.dart';
+import 'package:book_app_m2m/services/token_manager.dart';
+import 'package:book_app_m2m/utils/constants.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:platform_device_id/platform_device_id.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class AuthService {
-  static const String baseUrl = 'https://gen10.m2mbeta.com';
-  static const String _tokenKey = 'auth_token';
-  final SharedPreferences _prefs;
+  final TokenManager _tokenManager;
+
+  FullUserModel? _loggedInUser;
+  FullUserModel? get user => _loggedInUser;
 
   // Make constructor take SharedPreferences instance
-  AuthService(this._prefs);
+  AuthService(this._tokenManager);
 
   // Static method to initialize AuthService
   static Future<AuthService> init() async {
-    final prefs = await SharedPreferences.getInstance();
-    return AuthService(prefs);
+    return AuthService(await TokenManager.getInstance());
   }
 
-  // Token management methods
-  Future<void> _saveToken(String token) async {
-    await _prefs.setString(_tokenKey, token);
-  }
-
-  Future<String?> getToken() async {
-    return _prefs.getString(_tokenKey);
-  }
-
-  Future<void> clearToken() async {
-    await _prefs.remove(_tokenKey);
-  }
-
-  Future<bool> isLoggedIn() async {
-    final token = await getToken();
+  bool isLoggedIn() {
+    final token = _tokenManager.getToken();
     return token != null && token.isNotEmpty;
   }
 
@@ -47,7 +36,7 @@ class AuthService {
       }
 
       // Get the stored token
-      final token = await getToken();
+      final token = _tokenManager.getToken();
 
       final response = await http.get(
         uri,
@@ -61,11 +50,13 @@ class AuthService {
 
       if (response.statusCode == 200) {
         // Clear the stored token after successful logout
-        await clearToken();
+        await _tokenManager.clearToken();
+        _loggedInUser = null;
 
         return {
           'success': true,
-          'message': responseData['message'] ?? 'You have logout successfully',
+          'message':
+              responseData['message'] ?? 'You have logged out successfully',
         };
       } else if (response.statusCode == 500) {
         return {
@@ -90,11 +81,11 @@ class AuthService {
 
   Future<Map<String, dynamic>> getUserDetails() async {
     try {
-      final token = await getToken();
+      final token = _tokenManager.getToken();
       if (token == null) {
         return {
           'success': false,
-          'message': 'No authentication token found',
+          'message': 'No authentication token found. Sign in again.',
         };
       }
 
@@ -237,12 +228,14 @@ class AuthService {
 
       if (response.statusCode == 201) {
         // Save token locally
-        await _saveToken(responseData['data']['token']);
+        await _tokenManager.saveToken(responseData['data']['token']);
+
+        _loggedInUser = FullUserModel.fromMap(responseData['data']['user']);
 
         return {
           'success': true,
           'message': 'Login successful',
-          'user': responseData['data']['user'],
+          'user': _loggedInUser!.toMap(),
           'token': responseData['data']['token'],
         };
       } else if (response.statusCode == 400) {
@@ -273,7 +266,8 @@ class AuthService {
 
   Future<Map<String, dynamic>> _getDeviceInfo() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    String? deviceId = await PlatformDeviceId.getDeviceId;
+    // String? deviceId = await PlatformDeviceId.getDeviceId;
+    String? deviceId = '';
 
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
