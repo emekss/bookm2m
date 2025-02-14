@@ -1,6 +1,7 @@
 import 'package:book_app_m2m/components/custom_button.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:book_app_m2m/components/custom_textfield.dart';
+import 'package:book_app_m2m/models/full_user_model.dart';
 import 'package:book_app_m2m/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -41,35 +42,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _fetchUserDetails() async {
-    try {
-      final authService = Provider.of<AuthService>(context, listen: false);
-      final result = await authService.getUserDetails();
+    final AuthService authService =
+        Provider.of<AuthService>(context, listen: false);
+    final FullUserModel user = authService.user!;
 
-      if (result['success']) {
-        final userData = result['data'];
-        setState(() {
-          _firstNameController.text = userData['firstName'] ?? '';
-          _lastNameController.text = userData['lastName'] ?? '';
-          _emailController.text = userData['email'] ?? '';
-          _phoneController.text = userData['phone'] ?? 'No phone registered';
-          _passwordController.text = '************'; // Placeholder for password
-          _isLoading = false;
-        });
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(result['message'])),
-          );
-        }
-      }
-    } catch (e) {
-      print('Error fetching user details: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to load user details')),
-        );
-      }
-    }
+    setState(() {
+      _firstNameController.text = user.firstName;
+      _lastNameController.text = user.lastName;
+      _emailController.text = user.email;
+      _phoneController.text = user.phoneNumber;
+      // TODO: Password should not be displayed. Changing password should be on another screen. In fact, only hashes should be known.
+      _passwordController.text = '************';
+      _isLoading = false;
+    });
   }
 
   void _toggleConfirmPasswordVisibility() {
@@ -326,12 +311,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             },
                           ),
                         ),
-                        CustomText(
-                          text:
-                              'Opt into receiving weekly legacy questions to \nask your family',
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: Color.fromRGBO(119, 119, 121, 1),
+                        Expanded(
+                          child: CustomText(
+                            text:
+                                'Opt into receiving weekly legacy questions to ask your family',
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                            color: Color.fromRGBO(119, 119, 121, 1),
+                          ),
                         ),
                       ],
                     ),

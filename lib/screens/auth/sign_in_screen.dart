@@ -292,7 +292,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         SizedBox(height: media.height * 0.03),
                         // Sign in Button
                         CustomButton(
-                          buttonTitle: _isLoading ? 'Signinn in...' : 'Sign in',
+                          buttonTitle: _isLoading ? 'Signing in...' : 'Sign in',
                           onTap: () {
                             if (!_isLoading) {
                               _handleSignIn();

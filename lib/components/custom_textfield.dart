@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextfield extends StatelessWidget {
   final String hintText;
   final TextEditingController? controller;
   final bool? enabled;
+  final bool allowsOnlyNumber;
+
   const CustomTextfield({
     super.key,
     required this.hintText,
     this.controller,
     this.enabled,
+    this.allowsOnlyNumber = false,
   });
 
   @override
@@ -23,6 +27,9 @@ class CustomTextfield extends StatelessWidget {
         controller: controller,
         enabled: enabled,
         scrollPadding: EdgeInsets.zero,
+        keyboardType: allowsOnlyNumber ? TextInputType.number : null,
+        inputFormatters:
+            allowsOnlyNumber ? [FilteringTextInputFormatter.digitsOnly] : null,
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hintText,
@@ -33,6 +40,7 @@ class CustomTextfield extends StatelessWidget {
             color: Color.fromRGBO(110, 109, 121, 1),
           ),
         ),
+        onTapOutside: (_) => FocusScope.of(context).unfocus(),
       ),
     );
   }
