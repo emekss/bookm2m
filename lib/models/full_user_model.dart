@@ -8,11 +8,10 @@ class FullUserModel {
   final String email;
   final String phoneNumber;
   final DateTime? birthDate;
-  final String coverImageUrl;
+  final String? coverImageUrl;
   final String profileImageUrl;
   final String? motivationalQuote;
   final bool disabled;
-  // TODO: status and role should be enums but I don't know all possible values
   final String role;
   final String status; // "ACTIVE"
   final bool isEmailVerified;
@@ -29,7 +28,7 @@ class FullUserModel {
     required this.email,
     required this.phoneNumber,
     this.birthDate,
-    required this.coverImageUrl,
+    this.coverImageUrl,
     required this.profileImageUrl,
     this.motivationalQuote,
     required this.disabled,
@@ -66,21 +65,21 @@ class FullUserModel {
 
   factory FullUserModel.fromMap(Map<String, dynamic> map) {
     return FullUserModel(
-      id: map['id'] as String,
-      firstName: (map['firstName'] as String).toFirstUpperCase(),
-      lastName: (map['lastName'] as String).toFirstUpperCase(),
-      email: map['email'] as String,
-      phoneNumber: map['phoneNumber'] as String,
+      id: map['id'] as String? ?? '',
+      firstName: (map['firstName'] as String?)?.toFirstUpperCase() ?? '',
+      lastName: (map['lastName'] as String?)?.toFirstUpperCase() ?? '',
+      email: map['email'] as String? ?? '',
+      phoneNumber: map['phoneNumber'] as String? ?? '',
       birthDate: map['birthDate'] != null
           ? UtilFunctions.parseDateTime(map['birthDate'])
           : null,
-      coverImageUrl: map['coverImageUrl'] as String,
-      profileImageUrl: map['profileImage'] as String,
-      motivationalQuote: map['motivationalQuote'] as String?,
-      disabled: map['disabled'] as bool,
-      role: map['role'] as String,
-      status: map['status'] as String,
-      isEmailVerified: map['isEmailVerified'] as bool,
+      coverImageUrl: map['coverImageUrl'] as String? ?? '',
+      profileImageUrl: map['profileImageUrl'] as String? ?? '',
+      motivationalQuote: map['motivationalQuote'] as String? ?? '',
+      disabled: map['disabled'] as bool? ?? false,
+      role: map['role'] as String? ?? 'USER',
+      status: map['status'] as String? ?? 'ACTIVE',
+      isEmailVerified: map['isEmailVerified'] as bool? ?? false,
       lastSeen: UtilFunctions.parseDateTime(map['lastSeen']),
       createdAt: UtilFunctions.parseDateTime(map['createdAt']),
       updatedAt: UtilFunctions.parseDateTime(map['updatedAt']),

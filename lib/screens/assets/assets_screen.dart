@@ -10,21 +10,33 @@ import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
-class AssetsScreen extends StatefulWidget {
+import '../../api/asset/asset_controller.dart';
+
+class AssetsScreen extends ConsumerStatefulWidget {
   const AssetsScreen({super.key});
 
   @override
-  State<AssetsScreen> createState() => _AssetsScreenState();
+  ConsumerState<AssetsScreen> createState() => _AssetsScreenState();
 }
 
-class _AssetsScreenState extends State<AssetsScreen> {
+class _AssetsScreenState extends ConsumerState<AssetsScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   String? selectedValue;
   bool isDropdownOpen = false;
 
   @override
   Widget build(BuildContext context) {
+    final assetState = ref.watch(assetControllerProvider);
     var media = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -225,6 +237,13 @@ class _AssetsScreenState extends State<AssetsScreen> {
                                 Expanded(
                                   child: TextField(
                                     scrollPadding: EdgeInsets.zero,
+                                    onChanged: (query) {
+                                      ref
+                                          .read(
+                                              assetControllerProvider.notifier)
+                                          .searchAssets(query);
+                                    },
+                                    controller: _searchController,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       hintText: 'Search here',
@@ -245,6 +264,28 @@ class _AssetsScreenState extends State<AssetsScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
+                          assetState.when(
+                            data: (assets) => assets.isEmpty
+                                ? const Center(child: Text("No assets found"))
+                                : ListView.builder(
+                                    itemCount: assets.length,
+                                    itemBuilder: (context, index) {
+                                      final asset = assets[index];
+                                      return ListTile(
+                                        leading: Image.network(asset.url!,
+                                            width: 50,
+                                            height: 50,
+                                            fit: BoxFit.cover),
+                                        title: Text(asset.title!), 
+                                        subtitle: Text(asset.description ??
+                                            "No description"),
+                                      );
+                                    },
+                                  ),
+                            loading: () => const Center(
+                                child: CircularProgressIndicator()),
+                            error: (e, _) => Center(child: Text("Error: $e")),
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [

@@ -142,169 +142,171 @@ class _UploadAssetsScreenState extends State<UploadAssetsScreen> {
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          child: Column(
-            children: [
-              DashedRect(
-                gap: 8,
-                strokeWidth: 2,
-                color: Color.fromRGBO(67, 184, 136, 1),
-                child: Container(
-                  height: 218,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              children: [
+                DashedRect(
+                  gap: 8,
+                  strokeWidth: 2,
+                  color: Color.fromRGBO(67, 184, 136, 1),
+                  child: Container(
+                    height: 218,
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(246, 246, 247, 1),
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 40,
+                            width: 40,
+                            child: Image.asset('assets/icons/upload.png'),
+                          ),
+                          CustomText(
+                            text: 'Upload',
+                            color: Color.fromRGBO(67, 184, 136, 1),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          SizedBox(height: 4),
+                          CustomText(
+                            text: '(Files/images)',
+                            color: Color.fromRGBO(119, 119, 121, 1),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
                     color: Color.fromRGBO(246, 246, 247, 1),
                   ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 40,
-                          width: 40,
-                          child: Image.asset('assets/icons/upload.png'),
-                        ),
-                        CustomText(
-                          text: 'Upload',
-                          color: Color.fromRGBO(67, 184, 136, 1),
-                          fontSize: 14,
+                  child: TextField(
+                    scrollPadding: EdgeInsets.zero,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Title',
+                      hintStyle: TextStyle(
+                        fontFamily: 'PlusJakartaSans',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        color: Color.fromRGBO(41, 42, 44, 0.61),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Color.fromRGBO(246, 246, 247, 1),
+                  ),
+                  child: TextField(
+                    scrollPadding: EdgeInsets.zero,
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Tag People',
+                        hintStyle: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          fontSize: 15,
                           fontWeight: FontWeight.w400,
+                          color: Color.fromRGBO(41, 42, 44, 0.61),
                         ),
-                        SizedBox(height: 4),
-                        CustomText(
-                          text: '(Files/images)',
-                          color: Color.fromRGBO(119, 119, 121, 1),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ],
-                    ),
+                        suffixIcon: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Color.fromRGBO(110, 109, 121, 1),
+                        )),
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Color.fromRGBO(246, 246, 247, 1),
-                ),
-                child: TextField(
-                  scrollPadding: EdgeInsets.zero,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Title',
-                    hintStyle: TextStyle(
-                      fontFamily: 'PlusJakartaSans',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: Color.fromRGBO(41, 42, 44, 0.61),
-                    ),
+                SizedBox(height: 20),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Color.fromRGBO(246, 246, 247, 1),
+                  ),
+                  child: TextField(
+                    scrollPadding: EdgeInsets.zero,
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Type of Asset',
+                        hintStyle: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          color: Color.fromRGBO(41, 42, 44, 0.61),
+                        ),
+                        suffixIcon: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Color.fromRGBO(110, 109, 121, 1),
+                        )),
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Color.fromRGBO(246, 246, 247, 1),
-                ),
-                child: TextField(
-                  scrollPadding: EdgeInsets.zero,
-                  decoration: InputDecoration(
+                SizedBox(height: 20),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Color.fromRGBO(246, 246, 247, 1),
+                  ),
+                  padding: EdgeInsets.only(left: 20, bottom: 80),
+                  child: TextField(
+                    scrollPadding: EdgeInsets.zero,
+                    decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Tag People',
+                      hintText: 'Description',
                       hintStyle: TextStyle(
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 15,
                         fontWeight: FontWeight.w400,
                         color: Color.fromRGBO(41, 42, 44, 0.61),
                       ),
-                      suffixIcon: Icon(
-                        Icons.keyboard_arrow_down,
-                        color: Color.fromRGBO(110, 109, 121, 1),
-                      )),
+                    ),
+                  ),
                 ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Color.fromRGBO(246, 246, 247, 1),
-                ),
-                child: TextField(
-                  scrollPadding: EdgeInsets.zero,
-                  decoration: InputDecoration(
+                SizedBox(height: 20),
+                Container(
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Color.fromRGBO(246, 246, 247, 1),
+                  ),
+                  child: TextField(
+                    scrollPadding: EdgeInsets.zero,
+                    maxLines: 2,
+                    decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Type of Asset',
+                      hintText: 'Type here or hold mic to speak',
                       hintStyle: TextStyle(
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 15,
                         fontWeight: FontWeight.w400,
                         color: Color.fromRGBO(41, 42, 44, 0.61),
                       ),
-                      suffixIcon: Icon(
-                        Icons.keyboard_arrow_down,
-                        color: Color.fromRGBO(110, 109, 121, 1),
-                      )),
-                ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Color.fromRGBO(246, 246, 247, 1),
-                ),
-                padding: EdgeInsets.only(left: 20, bottom: 80),
-                child: TextField(
-                  scrollPadding: EdgeInsets.zero,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Description',
-                    hintStyle: TextStyle(
-                      fontFamily: 'PlusJakartaSans',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: Color.fromRGBO(41, 42, 44, 0.61),
+                      suffixIcon: SvgPicture.asset(
+                        'assets/icons/mic_icon.svg',
+                        height: 31,
+                        width: 31,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Color.fromRGBO(246, 246, 247, 1),
-                ),
-                child: TextField(
-                  scrollPadding: EdgeInsets.zero,
-                  maxLines: 2,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Type here or hold mic to speak',
-                    hintStyle: TextStyle(
-                      fontFamily: 'PlusJakartaSans',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: Color.fromRGBO(41, 42, 44, 0.61),
-                    ),
-                    suffixIcon: SvgPicture.asset(
-                      'assets/icons/mic_icon.svg',
-                      height: 31,
-                      width: 31,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              CustomButton(
-                buttonTitle: 'Add',
-                onTap: () {},
-              )
-            ],
+                SizedBox(height: 20),
+                CustomButton(
+                  buttonTitle: 'Add',
+                  onTap: () {},
+                )
+              ],
+            ),
           ),
         ),
       ),

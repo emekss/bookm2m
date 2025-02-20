@@ -11,21 +11,25 @@ import 'package:book_app_m2m/screens/question/add_answer_screen.dart';
 import 'package:book_app_m2m/screens/question/add_question_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
-class QuestionScreen extends StatefulWidget {
+import '../../api/questions/questions_controller.dart';
+
+class QuestionScreen extends ConsumerStatefulWidget {
   const QuestionScreen({super.key});
 
   @override
-  State<QuestionScreen> createState() => _QuestionScreenState();
+  ConsumerState<QuestionScreen> createState() => _QuestionScreenState();
 }
 
-class _QuestionScreenState extends State<QuestionScreen> {
+class _QuestionScreenState extends ConsumerState<QuestionScreen> {
   String? selectedValue;
   bool isDropdownOpen = false;
 
   @override
   Widget build(BuildContext context) {
+    final questionsState = ref.watch(questionsControllerProvider);
     var media = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -409,6 +413,75 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                 );
                               }),
                           SizedBox(height: 20),
+                          questionsState.when(
+                              data: (data) {
+                                return data.isEmpty
+                                    ? Text('No Questions')
+                                    : ListView.builder(
+                                        itemCount: questionsState.value!.length,
+                                        shrinkWrap: true,
+                                        itemBuilder: (context, index) {
+                                          final question =
+                                              questionsState.value![index];
+                                          return Container(
+                                            padding: const EdgeInsets.all(20),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                  color: const Color.fromRGBO(
+                                                      228, 228, 235, 1)),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                CustomText(
+                                                  fontStyle: FontStyle.italic,
+                                                  text:
+                                                      'Question ${questionsState.value![index]} / Topic',
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: const Color.fromRGBO(
+                                                      119, 119, 121, 1),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                CustomText(
+                                                  text: '${question.prompt}',
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: const Color.fromRGBO(
+                                                      53, 49, 45, 1),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                              },
+                              error: (error, st) =>
+                                  Center(child: Text("Error: $error")),
+                              loading: () => const Center(
+                                  child: CircularProgressIndicator())),
+//                           if (questionsState.isLoading) {
+//   return const Center(child: CircularProgressIndicator());
+// } else if (questionsState.hasError) {
+//   return Center(child: Text("Error: ${questionsState.error}"));
+// } else if (questionsState.hasValue && questionsState.value!.isEmpty) {
+//   return const Center(child: Text("No questions found."));
+// } else {
+//   return ListView.builder(
+//     itemCount: questionsState.value!.length,
+//     itemBuilder: (context, index) {
+//       final question = questionsState.value![index];
+//       return ListTile(
+//         title: Text(question.prompt ?? "No prompt"),
+//         subtitle: Text(question.help ?? "No help text"),
+//       );
+//     },
+//   );
+// }
                           Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(

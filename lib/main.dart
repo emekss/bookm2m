@@ -1,43 +1,47 @@
 import 'package:book_app_m2m/screens/splash_screen.dart';
-import 'package:book_app_m2m/services/auth_service.dart';
-import 'package:book_app_m2m/services/book_repo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
+
+import 'providers/auth_controller.dart';
+import 'screens/auth/main_screen_loader.dart';
+import 'screens/maintabview/main_tabview.dart';
+import 'services/token_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final authService = await AuthService.init();
-  final bookRepo = await BookRepo.init();
+  await TokenManager.getInstance(); // Ensure SharedPreferences is initialized
 
   runApp(
-    MultiProvider(
-      providers: [
-        Provider<AuthService>(create: (_) => authService),
-        Provider<BookRepo>(create: (_) => bookRepo)
-      ],
-      child: MyApp(),
-    ),
+    const ProviderScope(child: MyApp()),
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+
     return ScreenUtilInit(
       designSize: const Size(360, 690),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return child!;
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: authState.when(
+              data: (isAuthenticated) {
+                print(isAuthenticated);
+                return isAuthenticated ? MainTabview() : SplashScreen();
+              },
+              loading: () => const LoadingScreen(),
+              error: (_, __) => SplashScreen()
+              // Fallback
+              ),
+        );
       },
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: SplashScreen(),
-        // home: MainTabview(),
-      ),
     );
   }
 }

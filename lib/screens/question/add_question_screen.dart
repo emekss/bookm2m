@@ -22,6 +22,9 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
   String? selectedValue;
   bool isDropdownOpen = false;
 
+  final TextEditingController prompt = TextEditingController();
+  final TextEditingController help = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -184,6 +187,7 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: TextField(
                   scrollPadding: EdgeInsets.zero,
+                  controller: prompt,
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Type Here',
@@ -210,6 +214,7 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
                 ),
                 padding: EdgeInsets.only(left: 10, bottom: 80),
                 child: TextField(
+                  controller: help,
                   scrollPadding: EdgeInsets.zero,
                   decoration: InputDecoration(
                     border: InputBorder.none,

@@ -239,9 +239,10 @@ class AuthService {
           'token': responseData['data']['token'],
         };
       } else if (response.statusCode == 400) {
+        print('Login Error: ${response.body}');
         return {
           'success': false,
-          'message': 'Invalid email or password. Please try again.',
+          'message': response.body,
         };
       } else if (response.statusCode == 422) {
         return {
