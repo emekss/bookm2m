@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 
 import '../../dio_client.dart';
@@ -8,6 +10,36 @@ class BooksRepository {
   final DioClient dioClient;
 
   BooksRepository({required this.dioClient});
+
+  Future<String> uploadAsset(File file) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "title": file.path
+            .split('/')
+            .last, // API requires title, but it's optional (empty string)
+        "description": 0,
+        "type": "",
+        "taggedUsers": [],
+        "file": await MultipartFile.fromFile(file.path),
+      });
+
+      final response = await dioClient.post(
+        '/api/users/assets',
+        data: formData,
+        options: Options(
+          headers: {"Content-Type": "multipart/form-data"},
+        ),
+      );
+
+      return response.data["rowId"]; // Extract rowId
+    } on DioException catch (e) {
+      print(e);
+      throw DioExceptions.fromDioError(e);
+    } catch (e) {
+      print(e);
+      throw Exception("Failed to upload asset");
+    }
+  }
 
   Future<List<Books>> fetchBooks() async {
     try {

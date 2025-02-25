@@ -13,12 +13,13 @@ class AccountRepository {
     try {
       final response = await dioClient.get('/api/users/me');
       final data = response.data['data']['user'];
-      return data.map((json) => UserProfile.fromJson(json));
+
+      return UserProfile.fromJson(data); // ✅ Correct
     } on DioException catch (e) {
       throw DioExceptions.fromDioError(e);
     } catch (e) {
       print(e);
-      throw Exception("Failed to load user profile");
+      throw Exception(e);
     }
   }
 
@@ -27,7 +28,7 @@ class AccountRepository {
     required String firstName,
     required String lastName,
     required String phoneNumber,
-    required DateTime startDate,
+    required String startDate,
     required String motivationalQuote,
     required String profileImageId,
   }) async {

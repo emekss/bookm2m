@@ -6,19 +6,24 @@ import 'package:book_app_m2m/screens/family/build_family_screen.dart';
 import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
-class ViewtopicsScreen extends StatefulWidget {
+import '../../api/topic/topic_controller.dart';
+import 'add_topic_screen.dart';
+
+class ViewtopicsScreen extends ConsumerStatefulWidget {
   const ViewtopicsScreen({super.key});
 
   @override
-  State<ViewtopicsScreen> createState() => _ViewtopicsScreenState();
+  ConsumerState<ViewtopicsScreen> createState() => _ViewtopicsScreenState();
 }
 
-class _ViewtopicsScreenState extends State<ViewtopicsScreen> {
-  final List<Map<String, String>> topic = [
+class _ViewtopicsScreenState extends ConsumerState<ViewtopicsScreen> {
+  final List<Map<String, String>> topicss = [
     {
       'image': 'assets/images/topic_image.png',
       'title': 'Topic',
@@ -83,8 +88,12 @@ class _ViewtopicsScreenState extends State<ViewtopicsScreen> {
 
   String? selectedValue;
   bool isDropdownOpen = false;
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    final topicState = ref.watch(topicControllerProvider);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       floatingActionButton: SizedBox(
@@ -94,7 +103,14 @@ class _ViewtopicsScreenState extends State<ViewtopicsScreen> {
           elevation: 0,
           shape: const CircleBorder(),
           backgroundColor: const Color.fromRGBO(67, 184, 136, 1),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddTopicScreen(),
+              ),
+            );
+          },
           child: const Icon(
             Icons.add,
             color: Colors.white,
@@ -241,6 +257,7 @@ class _ViewtopicsScreenState extends State<ViewtopicsScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: TextField(
+                        controller: _searchController,
                         scrollPadding: EdgeInsets.zero,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
@@ -252,6 +269,11 @@ class _ViewtopicsScreenState extends State<ViewtopicsScreen> {
                             color: Color.fromRGBO(41, 42, 44, 0.61),
                           ),
                         ),
+                        onChanged: (query) {
+                          ref
+                              .read(topicControllerProvider.notifier)
+                              .searchTopic(query);
+                        },
                       ),
                     ),
                     SvgPicture.asset(
@@ -262,52 +284,56 @@ class _ViewtopicsScreenState extends State<ViewtopicsScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Grid View
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.75,
-                  ),
-                  itemCount: topic.length,
-                  itemBuilder: (context, index) {
-                    final topics = topic[index];
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        topics['image']!.endsWith('.svg')
-                            ? SvgPicture.asset(
-                                topics['image']!,
-                                height: 75,
-                                width: 75,
-                              )
-                            : Image.asset(
-                                topics['image']!,
-                                height: 75,
-                                width: 75,
-                              ),
-                        const SizedBox(height: 6),
-                        CustomText(
-                          text: topics['title']!,
-                          color: const Color.fromRGBO(53, 49, 45, 1),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+              topicState.when(
+                data: (topics) => topics.isEmpty
+                    ? const Center(child: Text("No Topics found"))
+                    : Expanded(
+                        child: GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                            childAspectRatio: 0.75,
+                          ),
+                          itemCount: topics.length,
+                          itemBuilder: (context, index) {
+                            final topic = topics[index];
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                topic.coverImage == null
+                                    ? Image.asset(
+                                        'assets/images/topic_image.png',
+                                        height: 75,
+                                        width: 75,
+                                      )
+                                    : Image.network(topic.coverImage!.url!),
+                                const SizedBox(height: 6),
+                                CustomText(
+                                  text: topic.name.toString(),
+                                  color: const Color.fromRGBO(53, 49, 45, 1),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                const SizedBox(height: 4),
+                                CustomText(
+                                  text: topic.count!.questions.toString(),
+                                  color: const Color.fromRGBO(119, 119, 121, 1),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                const SizedBox(height: 6),
+                              ],
+                            );
+                          },
                         ),
-                        const SizedBox(height: 4),
-                        CustomText(
-                          text: topics['author']!,
-                          color: const Color.fromRGBO(119, 119, 121, 1),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        const SizedBox(height: 6),
-                      ],
-                    );
-                  },
-                ),
+                      ),
+                loading: () =>
+                    const Center(child: CupertinoActivityIndicator()),
+                error: (e, _) => Center(child: Text("Error: $e")),
               ),
+              // Grid View
             ],
           ),
         ),

@@ -11,18 +11,18 @@ class QuestionsRepository {
 
   Future<List<Questions>> fetchQuestions() async {
     try {
-      final response = await dioClient.get('/api/users/assets');
+      final response = await dioClient.get('/api/users/questions');
       final data = response.data['data']['rows'] as List;
       return data.map((json) => Questions.fromJson(json)).toList();
     } on DioException catch (e) {
       throw DioExceptions.fromDioError(e);
     } catch (e) {
       print(e);
-      throw Exception("Failed to load questions");
+      throw Exception(e);
     }
   }
 
-   /// Create a new question
+  /// Create a new question
   Future<String> createQuestion({
     required String prompt,
     required String help,
@@ -51,7 +51,7 @@ class QuestionsRepository {
     required String prompt,
     required String help,
     required String topicId,
-    required String status,
+    required bool status,
   }) async {
     try {
       final response = await dioClient.put(
@@ -67,14 +67,15 @@ class QuestionsRepository {
     } on DioException catch (e) {
       throw DioExceptions.fromDioError(e);
     } catch (e) {
-      throw Exception("Failed to update question");
+      throw Exception(e);
     }
   }
 
   /// Delete a question
   Future<String> deleteQuestion(String questionId) async {
     try {
-      final response = await dioClient.delete('/api/users/questions/$questionId');
+      final response =
+          await dioClient.delete('/api/users/questions/$questionId');
       return response.data['message'];
     } on DioException catch (e) {
       throw DioExceptions.fromDioError(e);

@@ -9,23 +9,28 @@ import 'package:book_app_m2m/screens/family/view_topics_screen.dart';
 import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
-class BuildFamilyScreen extends StatefulWidget {
+import '../../api/family/family_controller.dart';
+
+class BuildFamilyScreen extends ConsumerStatefulWidget {
   const BuildFamilyScreen({super.key});
 
   @override
-  State<BuildFamilyScreen> createState() => _BuildFamilyScreenState();
+  ConsumerState<BuildFamilyScreen> createState() => _BuildFamilyScreenState();
 }
 
-class _BuildFamilyScreenState extends State<BuildFamilyScreen> {
+class _BuildFamilyScreenState extends ConsumerState<BuildFamilyScreen> {
   String? selectedValue;
   bool isDropdownOpen = false;
 
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
+    final familyState = ref.watch(familyControllerProvider);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       extendBodyBehindAppBar: true,
@@ -272,6 +277,12 @@ class _BuildFamilyScreenState extends State<BuildFamilyScreen> {
                                         color: Color.fromRGBO(41, 42, 44, 0.61),
                                       ),
                                     ),
+                                    onChanged: (query) {
+                                      ref
+                                          .read(
+                                              familyControllerProvider.notifier)
+                                          .searchQuestions(query);
+                                    },
                                   ),
                                 ),
                                 SvgPicture.asset(
@@ -282,14 +293,100 @@ class _BuildFamilyScreenState extends State<BuildFamilyScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          SizedBox(
-                            height: 545,
-                            child: ListView.builder(
-                                padding: EdgeInsets.zero,
-                                itemCount: 3,
-                                itemBuilder: (context, index) {
-                                  return FamilyContainer();
-                                }),
+                          familyState.when(
+                            data: (families) => families.isEmpty
+                                ? const Center(child: Text("No Family found"))
+                                : ListView.builder(
+                                    itemCount: families.length,
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) {
+                                      final family = families[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        child: SizedBox(
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                  height: 111,
+                                                  width: 111,
+                                                  child: Image.asset(
+                                                      'assets/images/family_image.png')),
+                                              SizedBox(width: 10),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      SizedBox(
+                                                          height: 22,
+                                                          width: 22,
+                                                          child: family
+                                                                      .relative!
+                                                                      .profileImage !=
+                                                                  null
+                                                              ? Image.network(family
+                                                                  .relative!
+                                                                  .profileImage!
+                                                                  .fileExtension!)
+                                                              : Image.asset(
+                                                                  'assets/images/user.png')),
+                                                      SizedBox(width: 8),
+                                                      CustomText(
+                                                        text:
+                                                            '${family.relative!.fullName!} ${family.relative!.lastName!}',
+                                                        color: Color.fromRGBO(
+                                                            14, 13, 30, 1),
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  CustomText(
+                                                    text:
+                                                        'Date time stamp, Topic',
+                                                    color: Color.fromRGBO(
+                                                        119, 119, 121, 1),
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 12,
+                                                  ),
+                                                  CustomText(
+                                                    text:
+                                                        family.relation!.name!,
+                                                    color: Color.fromRGBO(
+                                                        53, 49, 45, 1),
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 13,
+                                                  ),
+                                                  SizedBox(height: 8),
+                                                  Row(
+                                                    children: [
+                                                      SvgPicture.asset(
+                                                          'assets/icons/love_icon.svg'),
+                                                      SizedBox(width: 8),
+                                                      CustomText(
+                                                        text: '112',
+                                                        color: Color.fromRGBO(
+                                                            14, 13, 30, 1),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                            loading: () => const Center(
+                                child: CupertinoActivityIndicator()),
+                            error: (e, _) => Center(child: Text("Error: $e")),
                           ),
                           const SizedBox(height: 34),
                         ],

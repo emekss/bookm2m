@@ -1,3 +1,5 @@
+import 'package:book_app_m2m/widgets/snackbars.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/family.dart';
@@ -26,6 +28,7 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
 
   /// Create a new question and refresh the list
   Future<String> createFamily({
+    required BuildContext context,
     required String fullName,
     required String phoneNumber,
     required String email,
@@ -40,10 +43,13 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
           email: email,
           birthDate: birthDate,
           relationId: relationId);
+      showSuccessSnackBar(context, message);
       await fetchFamily();
+      Navigator.pop(context);
       return message;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
+      showErrorSnackBar(context, e.toString());
       return e.toString();
     }
   }
@@ -86,8 +92,9 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
       state = AsyncValue.data(_allFamily);
     } else {
       final filteredQuestions = _allFamily
-          .where((q) =>
-              q.relative!.fullName!.toLowerCase().contains(query.toLowerCase()))
+          .where((q) => q.relative!.firstName!
+              .toLowerCase()
+              .contains(query.toLowerCase()))
           .toList();
       state = AsyncValue.data(filteredQuestions);
     }

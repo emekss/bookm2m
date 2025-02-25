@@ -6,12 +6,15 @@ import 'package:book_app_m2m/screens/auth/verification_success_screen.dart';
 import 'package:book_app_m2m/screens/auth/reset_password_screen.dart';
 import 'package:book_app_m2m/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart';
 import 'package:svg_flutter/svg.dart';
 
+import '../../api/auth/auth_controller.dart';
+
 enum VerificationType { registration, passwordReset }
 
-class VerificationScreen extends StatefulWidget {
+class VerificationScreen extends ConsumerStatefulWidget {
   final String email;
   final VerificationType verificationType;
 
@@ -22,10 +25,10 @@ class VerificationScreen extends StatefulWidget {
   });
 
   @override
-  State<VerificationScreen> createState() => _VerificationScreenState();
+  ConsumerState<VerificationScreen> createState() => _VerificationScreenState();
 }
 
-class _VerificationScreenState extends State<VerificationScreen> {
+class _VerificationScreenState extends ConsumerState<VerificationScreen> {
   bool _isLoading = false;
 
   final List<TextEditingController> _otpControllers =
@@ -59,36 +62,40 @@ class _VerificationScreenState extends State<VerificationScreen> {
         return;
       }
 
-      final authService = Provider.of<AuthService>(context, listen: false);
-      final result = await authService.verifyEmail(
-        email: widget.email,
-        otp: otp,
-      );
+      final authController = ref.read(authControllerProvider.notifier);
+      authController.verifyEmail(
+          context: context, email: widget.email, otp: otp);
 
-      if (!mounted) return;
+      // final authService = Provider.of<AuthService>(context, listen: false);
+      // final result = await authService.verifyEmail(
+      //   email: widget.email,
+      //   otp: otp,
+      // );
 
-      if (result['success']) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const VerificationSuccessScreen(),
-          ),
-        );
-      } else {
-        // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(result['message'] ?? 'Verification failed'),
-            backgroundColor: Colors.red,
-          ),
-        );
+      // if (!mounted) return;
 
-        // Clear OTP fields on error
-        for (var controller in _otpControllers) {
-          controller.clear();
-        }
-        FocusScope.of(context).requestFocus(FocusNode());
-      }
+      // if (result['success']) {
+      //   Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (context) => const VerificationSuccessScreen(),
+      //     ),
+      //   );
+      // } else {
+      //   // Show error message
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Text(result['message'] ?? 'Verification failed'),
+      //       backgroundColor: Colors.red,
+      //     ),
+      //   );
+
+      //   // Clear OTP fields on error
+      //   for (var controller in _otpControllers) {
+      //     controller.clear();
+      //   }
+      //   FocusScope.of(context).requestFocus(FocusNode());
+      // }
     } catch (e) {
       print('Error during verification: $e');
       if (!mounted) return;
@@ -144,22 +151,21 @@ class _VerificationScreenState extends State<VerificationScreen> {
   void _handleResendOTP() async {
     if (!_canResend) return;
 
-    final authService = Provider.of<AuthService>(context, listen: false);
-    final result = await authService.resendOtp(email: widget.email);
+    // final authService = Provider.of<AuthService>(context, listen: false);
+    // final result = await authService.resendOtp(email: widget.email);
 
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result['message'])),
-      );
-    }
-
-    if (result['success']) {
-      _startTimer();
-    }
+    final authController = ref.read(authControllerProvider.notifier);
+    authController.resendOtp(
+        context: context,
+        email: widget.email,
+        onSuccess: () {
+          _startTimer();
+        });
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.read(authControllerProvider) is AsyncLoading;
     var media = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -264,7 +270,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     ),
                     SizedBox(height: media.height * 0.03),
                     CustomButton(
-                        buttonTitle: 'Continue',
+                        buttonTitle: isLoading ? 'waiting...' : 'Continue',
                         onTap: () {
                           _isLoading ? null : _verifyOTP();
                         }),

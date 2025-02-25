@@ -1,4 +1,5 @@
 import 'package:book_app_m2m/components/custom_text.dart';
+import 'package:book_app_m2m/screens/order/order_page_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:svg_flutter/svg.dart';
 
@@ -94,23 +95,33 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                     color: Color.fromRGBO(53, 49, 45, 1),
                                   ),
                                   SizedBox(height: 5),
-                                  Row(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          SvgPicture.asset(
-                                              'assets/icons/refresh_icon.svg'),
-                                          SizedBox(width: 6),
-                                          CustomText(
-                                            text: 'Buy Again',
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500,
-                                            color:
-                                                Color.fromRGBO(67, 184, 136, 1),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                OrderPageScreen()),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SvgPicture.asset(
+                                                'assets/icons/refresh_icon.svg'),
+                                            SizedBox(width: 6),
+                                            CustomText(
+                                              text: 'Buy Again',
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500,
+                                              color: Color.fromRGBO(
+                                                  67, 184, 136, 1),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),

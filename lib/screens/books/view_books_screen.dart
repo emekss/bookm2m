@@ -7,19 +7,22 @@ import 'package:book_app_m2m/screens/dashboard/dashboard_screen.dart';
 import 'package:book_app_m2m/screens/family/build_family_screen.dart';
 import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
+import '../../api/book/book_controller.dart';
 import '../question/answer_screen.dart';
 
-class ViewBooksScreen extends StatefulWidget {
+class ViewBooksScreen extends ConsumerStatefulWidget {
   const ViewBooksScreen({super.key});
 
   @override
-  State<ViewBooksScreen> createState() => _ViewBooksScreenState();
+  ConsumerState<ViewBooksScreen> createState() => _ViewBooksScreenState();
 }
 
-class _ViewBooksScreenState extends State<ViewBooksScreen> {
+class _ViewBooksScreenState extends ConsumerState<ViewBooksScreen> {
   final List<Map<String, String>> books = [
     {
       'image': 'assets/images/book1.png',
@@ -57,6 +60,7 @@ class _ViewBooksScreenState extends State<ViewBooksScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bookState = ref.watch(bookControllerProvider);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         elevation: 0,
@@ -201,75 +205,93 @@ class _ViewBooksScreenState extends State<ViewBooksScreen> {
             children: [
               SizedBox(height: 10),
               // Grid View
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.62,
-                  ),
-                  itemCount: books.length,
-                  itemBuilder: (context, index) {
-                    final book = books[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const BooksDetailScreen(),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Stack(
-                              fit: StackFit.expand,
-                              alignment: Alignment.center,
-                              children: [
-                                SizedBox(
-                                  height: 210,
-                                  width: 168,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.asset(
-                                      book['image']!,
-                                      fit: BoxFit.cover,
-                                    ),
+              bookState.when(
+                  data: (books) {
+                    return Expanded(
+                      child: books.isEmpty
+                          ? Center(
+                              child: Text(
+                              'No Books, Add a book to view',
+                              style: TextStyle(fontSize: 15, color: Colors.red),
+                            ))
+                          : GridView.builder(
+                              shrinkWrap: true,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                                childAspectRatio: 0.62,
+                              ),
+                              itemCount: books.length,
+                              itemBuilder: (context, index) {
+                                final book = books[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const BooksDetailScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Stack(
+                                          fit: StackFit.expand,
+                                          alignment: Alignment.center,
+                                          children: [
+                                            SizedBox(
+                                              height: 210,
+                                              width: 168,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: Image.asset(
+                                                  book.coverImage!.url!,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                            Positioned(
+                                              top: 10,
+                                              right: 10,
+                                              child: Image.asset(
+                                                  'assets/icons/love_icon.png'),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      CustomText(
+                                        text: book.title!,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color:
+                                            const Color.fromRGBO(53, 49, 45, 1),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      CustomText(
+                                        text: book.dedication!,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: const Color.fromRGBO(
+                                            119, 119, 121, 1),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                Positioned(
-                                  top: 10,
-                                  right: 10,
-                                  child:
-                                      Image.asset('assets/icons/love_icon.png'),
-                                ),
-                              ],
+                                );
+                              },
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          CustomText(
-                            text: book['title']!,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: const Color.fromRGBO(53, 49, 45, 1),
-                          ),
-                          const SizedBox(height: 4),
-                          CustomText(
-                            text: book['author']!,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: const Color.fromRGBO(119, 119, 121, 1),
-                          ),
-                        ],
-                      ),
                     );
                   },
-                ),
-              ),
+                  error: (error, st) => Text(error.toString()),
+                  loading: () => Center(child: CupertinoActivityIndicator())),
             ],
           ),
         ),

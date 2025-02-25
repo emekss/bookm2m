@@ -2,18 +2,21 @@ import 'package:book_app_m2m/components/custom_button.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:book_app_m2m/screens/auth/sign_in_screen.dart';
 import 'package:book_app_m2m/screens/auth/verification_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart';
+import '../../api/auth/auth_controller.dart';
 import '../../services/auth_service.dart';
 import 'package:flutter/material.dart';
 
-class CreateAccountScreen extends StatefulWidget {
+class CreateAccountScreen extends ConsumerStatefulWidget {
   const CreateAccountScreen({super.key});
 
   @override
-  State<CreateAccountScreen> createState() => _CreateAccountScreenState();
+  ConsumerState<CreateAccountScreen> createState() =>
+      _CreateAccountScreenState();
 }
 
-class _CreateAccountScreenState extends State<CreateAccountScreen> {
+class _CreateAccountScreenState extends ConsumerState<CreateAccountScreen> {
   bool _obscureText = true;
   bool _obscurePasswordText = true;
   bool _isChecked = false;
@@ -83,39 +86,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     print('Confirm Password: ${_confirmPasswordController.text}');
 
     try {
-      final authService = Provider.of<AuthService>(context, listen: false);
-
-      final result = await authService.signUp(
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-
-      print('SignUp API response: $result'); // Debug log
-
-      if (result['success']) {
-        if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VerificationScreen(
-              email: _emailController.text,
-              verificationType: VerificationType.registration,
-            ),
-          ),
-        );
-      } else {
-        // Handle specific error messages from the server
-        String errorMessage = result['message'];
-        if (errorMessage.contains('Please check your information')) {
-          // Parse the specific validation errors
-          final List<String> errors = errorMessage.split('\n');
-          errorMessage =
-              errors.first; // Show only the first error for simplicity
-        }
-        _showErrorSnackBar(errorMessage);
-      }
+      final authController = ref.read(authControllerProvider.notifier);
+      authController.signup(
+          context: context,
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
+          email: _emailController.text,
+          password: _passwordController.text);
     } catch (e) {
       print('SignUp error: $e'); // Debug log
       _showErrorSnackBar('Unable to create account. Please try again.');
@@ -149,6 +126,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
+    final isLoading = ref.watch(authControllerProvider);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       extendBodyBehindAppBar: true,
@@ -463,7 +441,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         SizedBox(height: media.height * 0.03),
                         // Create Account Button
                         CustomButton(
-                          buttonTitle: _isLoading
+                          buttonTitle: isLoading is AsyncLoading
                               ? 'Creating Account...'
                               : 'Create an account',
                           onTap: () {

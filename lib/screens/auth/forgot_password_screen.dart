@@ -3,17 +3,21 @@ import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:book_app_m2m/screens/auth/verification_screen.dart';
 import 'package:book_app_m2m/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart';
 import 'package:svg_flutter/svg.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
+import '../../api/auth/auth_controller.dart';
+
+class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() =>
+      _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -54,48 +58,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Future<void> _handleForgotPassword() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final authService = Provider.of<AuthService>(context, listen: false);
-
-      final result = await authService.forgotPassword(
+    if (_formKey.currentState!.validate()) {
+      final authController = ref.read(authControllerProvider.notifier);
+      authController.forgotPassword(
+        context: context,
         email: _emailController.text,
       );
-
-      if (result['success']) {
-        _showSuccessSnackBar(result['message']);
-        // Navigate to verification screen with password reset type
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VerificationScreen(
-              email: _emailController.text,
-              verificationType: VerificationType.passwordReset,
-            ),
-          ),
-        );
-      } else {
-        _showErrorSnackBar(result['message']);
-      }
-    } catch (e) {
-      print('Error during password reset request: $e');
-      _showErrorSnackBar('An unexpected error occurred. Please try again.');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authControllerProvider);
     var media = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -210,8 +184,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       SizedBox(height: media.height * 0.03),
                       // Send Reset Link Button
                       CustomButton(
-                        buttonTitle:
-                            _isLoading ? 'Sending...' : 'Send reset link',
+                        buttonTitle: authState.isLoading
+                            ? 'Sending...'
+                            : 'Send reset link',
                         onTap: () {
                           if (!_isLoading) {
                             _handleForgotPassword();

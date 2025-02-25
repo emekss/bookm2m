@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:book_app_m2m/api/book/book_repo.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/books.dart';
+import '../../widgets/snackbars.dart';
 import '../asset/asset_controller.dart';
 
 class BooksController extends StateNotifier<AsyncValue<List<Books>>> {
@@ -26,22 +30,30 @@ class BooksController extends StateNotifier<AsyncValue<List<Books>>> {
 
   /// Create a new question and refresh the list
   Future<String> createBooks({
+    required BuildContext context,
     required String title,
     required String dedication,
-    required String coverImageId,
+    required File coverImage,
     required num volumeNumber,
     required List<String> questions,
     required List<String> answers,
   }) async {
     state = const AsyncValue.loading();
     try {
+      final rowId = await repository.uploadAsset(coverImage);
+      showSuccessSnackBar(context, "✅ File uploaded successfully");
+      print("✅ File uploaded successfully");
+
       final message = await repository.createBooks(
           title: title,
           dedication: dedication,
-          coverImageId: coverImageId,
+          coverImageId: rowId,
           volumeNumber: volumeNumber,
           questions: questions,
           answers: answers);
+      showSuccessSnackBar(context, message);
+      print("✅ Book created successfully: $message");
+      Navigator.pop(context);
       await fetchBooks();
       return message;
     } catch (e, stack) {

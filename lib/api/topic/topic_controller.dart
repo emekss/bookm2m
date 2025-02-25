@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:book_app_m2m/widgets/snackbars.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/topic_model.dart';
@@ -26,16 +30,27 @@ class TopicController extends StateNotifier<AsyncValue<List<TopicModel>>> {
 
   /// Create a new question and refresh the list
   Future<String> createTopic({
+    required BuildContext context,
+    required File file,
     required String name,
-    required String coverImageId,
   }) async {
     state = const AsyncValue.loading();
     try {
-      final message =
-          await repository.createTopic(name: name, coverImageId: coverImageId);
-      await fetchTopics(); // Refresh questions list
+      final rowId = await repository.uploadAsset(file);
+      showSuccessSnackBar(context, "$rowId");
+      print("✅ File uploaded successfully, rowId: $rowId");
+
+      final message = await repository.createTopic(
+        name: name,
+        coverImageId: rowId,
+      );
+      showSuccessSnackBar(context, message);
+      print("✅ Topic created successfully: $message");
+
+      await fetchTopics();
       return message;
     } catch (e, stack) {
+      showErrorSnackBar(context, e.toString());
       state = AsyncValue.error(e, stack);
       return e.toString();
     }
@@ -79,10 +94,10 @@ class TopicController extends StateNotifier<AsyncValue<List<TopicModel>>> {
     if (query.isEmpty) {
       state = AsyncValue.data(_allTopics);
     } else {
-      final filteredQuestions = _allTopics
-          .where((q) => q.prompt!.toLowerCase().contains(query.toLowerCase()))
+      final filteredTopics = _allTopics
+          .where((q) => q.name!.toLowerCase().contains(query.toLowerCase()))
           .toList();
-      state = AsyncValue.data(filteredQuestions);
+      state = AsyncValue.data(filteredTopics);
     }
   }
 }

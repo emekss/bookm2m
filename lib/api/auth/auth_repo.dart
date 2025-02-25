@@ -9,7 +9,6 @@ import 'package:geolocator/geolocator.dart';
 import '../../dio_client.dart';
 import '../../dio_exception.dart';
 import '../../services/token_manager.dart';
-import '../../utils/constants.dart';
 import '../../utils/type_def.dart';
 import '../asset/asset_controller.dart';
 
@@ -98,6 +97,35 @@ class AuthApi {
     }
   }
 
+  FutureEither<Response> signup(
+    String firstName,
+    String lastName,
+    String email,
+    String password,
+  ) async {
+    try {
+      final response = await dioClient.post(
+        '/api/auth/signup',
+        data: {
+          "firstName": firstName,
+          "lastName": lastName,
+          "email": email,
+          "password": password
+        },
+        options: Options(headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        }),
+      );
+      return right(response);
+    } on DioException catch (e) {
+      print(e);
+      return left(Failure(DioExceptions.fromDioError(e).toString()));
+    } catch (e) {
+      print(e);
+      return left(Failure(e.toString()));
+    }
+  }
+
   FutureEither<String> login(String email, String pw) async {
     try {
       final deviceInfo = await _getDeviceInfo();
@@ -126,6 +154,140 @@ class AuthApi {
         return right(token);
       }
       return left(Failure("Invalid response from server"));
+    } on DioException catch (e) {
+      print(e);
+      return left(Failure(DioExceptions.fromDioError(e).toString()));
+    } catch (e) {
+      print(e);
+      return left(Failure(e.toString()));
+    }
+  }
+
+  FutureEither<Response> forgotPassword(
+    String email,
+  ) async {
+    try {
+      final response = await dioClient.post(
+        '/api/auth/forgotPassword',
+        data: {
+          "email": email,
+        },
+        options: Options(headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        }),
+      );
+      return right(response);
+    } on DioException catch (e) {
+      print(e);
+      return left(Failure(DioExceptions.fromDioError(e).toString()));
+    } catch (e) {
+      print(e);
+      return left(Failure(e.toString()));
+    }
+  }
+
+  FutureEither<Response> signUp(
+    String email,
+    String lastName,
+    String firstName,
+    String password,
+  ) async {
+    try {
+      final response = await dioClient.post(
+        '/api/auth/signup',
+        data: {
+          "firstName": firstName,
+          "lastName": lastName,
+          "email": email,
+          "password": password
+        },
+        options: Options(headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        }),
+      );
+      return right(response);
+    } on DioException catch (e) {
+      print(e);
+      return left(Failure(DioExceptions.fromDioError(e).toString()));
+    } catch (e) {
+      print(e);
+      return left(Failure(e.toString()));
+    }
+  }
+
+  FutureEither<Response> resetPassword(String otp, String newPw) async {
+    try {
+      final response = await dioClient.post(
+        '/api/auth/resetPassword',
+        data: {"otp": otp, "newPassword": newPw},
+        options: Options(headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        }),
+      );
+      return right(response);
+    } on DioException catch (e) {
+      print(e);
+      return left(Failure(DioExceptions.fromDioError(e).toString()));
+    } catch (e) {
+      print(e);
+      return left(Failure(e.toString()));
+    }
+  }
+
+  FutureEither<Response> confirmAccount(
+    String email,
+    String token,
+    String newPassword,
+  ) async {
+    try {
+      final response = await dioClient.post(
+        '/api/auth/confirmAccount',
+        data: {"email": email, "token": token, "newPassword": newPassword},
+        options: Options(headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        }),
+      );
+      return right(response);
+    } on DioException catch (e) {
+      print(e);
+      return left(Failure(DioExceptions.fromDioError(e).toString()));
+    } catch (e) {
+      print(e);
+      return left(Failure(e.toString()));
+    }
+  }
+
+  FutureEither<Response> resendOtp(
+    String email,
+  ) async {
+    try {
+      final response = await dioClient.post(
+        '/api/auth/resendOtp',
+        data: {"email": email},
+        options: Options(headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        }),
+      );
+      return right(response);
+    } on DioException catch (e) {
+      print(e);
+      return left(Failure(DioExceptions.fromDioError(e).toString()));
+    } catch (e) {
+      print(e);
+      return left(Failure(e.toString()));
+    }
+  }
+
+  FutureEither<Response> verifyEmail(String email, String otp) async {
+    try {
+      final response = await dioClient.post(
+        '/api/auth/verify-email',
+        data: {"email": email, "otp": otp},
+        options: Options(headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        }),
+      );
+      return right(response);
     } on DioException catch (e) {
       print(e);
       return left(Failure(DioExceptions.fromDioError(e).toString()));

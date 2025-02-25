@@ -27,194 +27,196 @@ class ApplePayBottomSheet extends StatelessWidget {
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const CustomText(
-                    text: 'Apple Pay',
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                  GestureDetector(
-                    onTap: onCancel,
-                    child: const CustomText(
-                      text: 'Cancel',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: Color.fromRGBO(0, 122, 255, 1),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // App Info
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: Row(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: Image.asset('assets/images/logo_icon.png'),
+                    const CustomText(
+                      text: 'Apple Pay',
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
                     ),
-                    const SizedBox(width: 20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        CustomText(
-                          text: 'Gen12App',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                        CustomText(
-                          text: 'Your App — Description',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Color.fromRGBO(125, 125, 125, 1),
-                        ),
-                      ],
+                    GestureDetector(
+                      onTap: onCancel,
+                      child: const CustomText(
+                        text: 'Cancel',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Color.fromRGBO(0, 122, 255, 1),
+                      ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 8),
-              Divider(
-                color: Colors.white.withOpacity(0.12),
-              ),
-              const SizedBox(height: 10),
-              // Details Section
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Row(
-                      children: [
-                        Transform.translate(
-                          offset: Offset(-20, 5),
-                          child: const _SectionHeader(title: 'DETAILS'),
-                        ),
-                        SizedBox(width: 10),
-                        const CustomText(
-                          text:
-                              'For testing purposes only. You will not \nbe charged for confirming this \npurchase.',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Divider(
-                    color: Colors.white.withOpacity(0.12),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Transform.translate(
-                          offset: Offset(-30, 5),
-                          child: const _SectionHeader(title: 'ACCOUNT'),
-                        ),
-                        SizedBox(width: 10),
-                        Transform.translate(
-                          offset: Offset(-13, 0),
-                          child: CustomText(
-                            text: email,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Divider(
-                    color: Colors.white.withOpacity(0.12),
-                  ),
-                  const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Row(
-                      children: [
-                        Transform.translate(
-                          offset: Offset(0, 5),
-                          child: const _SectionHeader(title: 'Item'),
-                        ),
-                        SizedBox(width: 20),
-                        Transform.translate(
-                          offset: Offset(8, 0),
-                          child: CustomText(
-                            text: bookTitle,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Row(
-                      children: [
-                        Transform.translate(
-                          offset: Offset(0, 5),
-                          child: const _SectionHeader(title: 'PRICE'),
-                        ),
-                        SizedBox(width: 10),
-                        Transform.translate(
-                          offset: Offset(8, 0),
-                          child: CustomText(
-                            text: '\$$price',
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Divider(
-                color: Colors.white.withOpacity(0.12),
-              ),
-              const SizedBox(height: 10),
+                const SizedBox(height: 24),
 
-              // Confirmation UI
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => OrderConfirmedScreen(),
+                // App Info
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: Image.asset('assets/images/logo_icon.png'),
+                      ),
+                      const SizedBox(width: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          CustomText(
+                            text: 'Gen12App',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                          CustomText(
+                            text: 'Your App — Description',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Color.fromRGBO(125, 125, 125, 1),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Divider(
+                  color: Colors.white.withOpacity(0.12),
+                ),
+                const SizedBox(height: 10),
+                // Details Section
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: Row(
+                        children: [
+                          Transform.translate(
+                            offset: Offset(-20, 5),
+                            child: const _SectionHeader(title: 'DETAILS'),
+                          ),
+                          SizedBox(width: 10),
+                          const CustomText(
+                            text:
+                                'For testing purposes only. You will not \nbe charged for confirming this \npurchase.',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
                     ),
-                  );
-                },
-                child: SvgPicture.asset('assets/icons/apple_icon.svg'),
-              ),
-              const SizedBox(height: 8),
-              const CustomText(
-                text: 'Confirm with Side Button',
-                fontSize: 17,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
-              ),
-              const SizedBox(height: 16),
-            ],
+                    const SizedBox(height: 8),
+                    Divider(
+                      color: Colors.white.withOpacity(0.12),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Transform.translate(
+                            offset: Offset(-30, 5),
+                            child: const _SectionHeader(title: 'ACCOUNT'),
+                          ),
+                          SizedBox(width: 10),
+                          Transform.translate(
+                            offset: Offset(-13, 0),
+                            child: CustomText(
+                              text: email,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Divider(
+                      color: Colors.white.withOpacity(0.12),
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: Row(
+                        children: [
+                          Transform.translate(
+                            offset: Offset(0, 5),
+                            child: const _SectionHeader(title: 'Item'),
+                          ),
+                          SizedBox(width: 20),
+                          Transform.translate(
+                            offset: Offset(8, 0),
+                            child: CustomText(
+                              text: bookTitle,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: Row(
+                        children: [
+                          Transform.translate(
+                            offset: Offset(0, 5),
+                            child: const _SectionHeader(title: 'PRICE'),
+                          ),
+                          SizedBox(width: 10),
+                          Transform.translate(
+                            offset: Offset(8, 0),
+                            child: CustomText(
+                              text: '\$$price',
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Divider(
+                  color: Colors.white.withOpacity(0.12),
+                ),
+                const SizedBox(height: 10),
+
+                // Confirmation UI
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OrderConfirmedScreen(),
+                      ),
+                    );
+                  },
+                  child: SvgPicture.asset('assets/icons/apple_icon.svg'),
+                ),
+                const SizedBox(height: 8),
+                const CustomText(
+                  text: 'Confirm with Side Button',
+                  fontSize: 17,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),

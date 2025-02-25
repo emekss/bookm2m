@@ -27,7 +27,7 @@ class AccountController extends StateNotifier<AsyncValue<UserProfile>> {
     required String firstName,
     required String lastName,
     required String phoneNumber,
-    required DateTime startDate,
+    required String startDate,
     required String motivationalQuote,
     required String profileImageId,
   }) async {
@@ -51,7 +51,7 @@ class AccountController extends StateNotifier<AsyncValue<UserProfile>> {
 
 // Provider for QuestionsController
 final accountControllerProvider = StateNotifierProvider.autoDispose<
-    AccountController, AsyncValue<List<UserProfile>>>(
+    AccountController, AsyncValue<UserProfile>>(
   (ref) => AccountController(ref.watch(accountRepositoryProvider)),
 );
 

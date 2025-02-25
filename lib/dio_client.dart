@@ -27,6 +27,7 @@ class DioClient {
 
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
+            
           }
 
           return handler.next(options); // Proceed with request
@@ -74,32 +75,31 @@ class DioClient {
     }
   }
 
-      // Put:-----------------------------------------------------------------------
-    Future<Response> put(
-      String url, {
-      dynamic data,
-      Map<String, dynamic>? queryParameters,
-      Options? options,
-      CancelToken? cancelToken,
-      ProgressCallback? onSendProgress,
-      ProgressCallback? onReceiveProgress,
-    }) async {
-      try {
-        final Response response = await _dio.put(
-          url,
-          data: data,
-          queryParameters: queryParameters,
-          options: options,
-          cancelToken: cancelToken,
-          onSendProgress: onSendProgress,
-          onReceiveProgress: onReceiveProgress,
-        );
-        return response;
-      } catch (e) {
-        rethrow;
-      }
+  // Put:-----------------------------------------------------------------------
+  Future<Response> put(
+    String url, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    try {
+      final Response response = await _dio.put(
+        url,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
     }
-
+  }
 
   // Patch:-----------------------------------------------------------------------
   Future<Response> patch(

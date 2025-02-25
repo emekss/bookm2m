@@ -10,23 +10,29 @@ import 'package:book_app_m2m/screens/family/view_topics_screen.dart';
 import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
-class InspiredCommunityScreen extends StatefulWidget {
+import '../../api/community/community_controller.dart';
+
+class InspiredCommunityScreen extends ConsumerStatefulWidget {
   const InspiredCommunityScreen({super.key});
 
   @override
-  State<InspiredCommunityScreen> createState() =>
+  ConsumerState<InspiredCommunityScreen> createState() =>
       _InspiredCommunityScreenState();
 }
 
-class _InspiredCommunityScreenState extends State<InspiredCommunityScreen> {
+class _InspiredCommunityScreenState
+    extends ConsumerState<InspiredCommunityScreen> {
   String? selectedValue;
   bool isDropdownOpen = false;
 
   @override
   Widget build(BuildContext context) {
+    final communityState = ref.watch(communityControllerProvider);
     var media = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -297,15 +303,117 @@ class _InspiredCommunityScreenState extends State<InspiredCommunityScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          SizedBox(
-                            height: 545,
-                            child: ListView.builder(
-                                padding: EdgeInsets.zero,
-                                itemCount: 3,
-                                itemBuilder: (context, index) {
-                                  return FamilyContainer();
-                                }),
+                          communityState.when(
+                            data: (communities) => communities.isEmpty
+                                ? const Center(child: Text("No Community"))
+                                : SizedBox(
+                                    height: 545,
+                                    child: ListView.builder(
+                                        padding: EdgeInsets.zero,
+                                        itemCount: communities.length,
+                                        itemBuilder: (context, index) {
+                                          final community = communities[index];
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 10),
+                                            child: SizedBox(
+                                              child: Row(
+                                                children: [
+                                                  SizedBox(
+                                                      height: 111,
+                                                      width: 111,
+                                                      child: Image.asset(
+                                                          'assets/images/family_image.png')),
+                                                  SizedBox(width: 10),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          SizedBox(
+                                                              height: 22,
+                                                              width: 22,
+                                                              child: Image.asset(
+                                                                  'assets/images/user.png')),
+                                                          SizedBox(width: 8),
+                                                          CustomText(
+                                                            text: community
+                                                                    .name ??
+                                                                'Community name',
+                                                            color:
+                                                                Color.fromRGBO(
+                                                                    14,
+                                                                    13,
+                                                                    30,
+                                                                    1),
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            'Date time stamp, Topic',
+                                                        color: Color.fromRGBO(
+                                                            119, 119, 121, 1),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 12,
+                                                      ),
+                                                      CustomText(
+                                                        text:
+                                                            '${community.name}',
+                                                        color: Color.fromRGBO(
+                                                            53, 49, 45, 1),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 13,
+                                                      ),
+                                                      SizedBox(height: 8),
+                                                      Row(
+                                                        children: [
+                                                          SvgPicture.asset(
+                                                              'assets/icons/love_icon.svg'),
+                                                          SizedBox(width: 8),
+                                                          CustomText(
+                                                            text:
+                                                                '${community.members!.length}',
+                                                            color:
+                                                                Color.fromRGBO(
+                                                                    14,
+                                                                    13,
+                                                                    30,
+                                                                    1),
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                  ),
+                            loading: () => const Center(
+                                child: CupertinoActivityIndicator()),
+                            error: (e, _) => Center(child: Text("Error: $e")),
                           ),
+                          // SizedBox(
+                          //   height: 545,
+                          //   child: ListView.builder(
+                          //       padding: EdgeInsets.zero,
+                          //       itemCount: 3,
+                          //       itemBuilder: (context, index) {
+                          //         return FamilyContainer();
+                          //       }),
+                          // ),
                           const SizedBox(height: 24),
                         ],
                       ),

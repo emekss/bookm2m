@@ -15,8 +15,9 @@ class AuthController extends AsyncNotifier<bool> {
   }
 
   bool _isTokenValid(String token) {
+    print(token);
     // Add token validation logic if needed
-    return true; 
+    return true;
   }
 
   Future<void> logout() async {

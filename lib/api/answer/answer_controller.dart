@@ -1,3 +1,5 @@
+import 'package:book_app_m2m/widgets/snackbars.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/answers.dart';
@@ -26,6 +28,7 @@ class AnswerController extends StateNotifier<AsyncValue<List<Answers>>> {
 
   /// Create a new question and refresh the list
   Future<String> createAnswers({
+    required BuildContext context,
     required String questionId,
     required String prompt,
   }) async {
@@ -34,9 +37,12 @@ class AnswerController extends StateNotifier<AsyncValue<List<Answers>>> {
       final message = await repository.createAnswers(
           questionId: questionId, prompt: prompt);
       await fetchAnswers();
+      showSuccessSnackBar(context, message);
+      Navigator.pop(context);
       return message;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
+      showErrorSnackBar(context, e.toString());
       return e.toString();
     }
   }
@@ -87,13 +93,13 @@ class AnswerController extends StateNotifier<AsyncValue<List<Answers>>> {
 }
 
 // Provider for QuestionsController
-final challengeControllerProvider = StateNotifierProvider.autoDispose<
+final answerControllerProvider = StateNotifierProvider.autoDispose<
     AnswerController, AsyncValue<List<Answers>>>(
-  (ref) => AnswerController(ref.watch(challengeRepositoryProvider)),
+  (ref) => AnswerController(ref.watch(answerRepositoryProvider)),
 );
 
 // Provider for QuestionsRepository
-final challengeRepositoryProvider = Provider((ref) {
+final answerRepositoryProvider = Provider((ref) {
   final dioClient = ref.read(dioClientProvider);
   return AnswersRepository(dioClient: dioClient);
 });

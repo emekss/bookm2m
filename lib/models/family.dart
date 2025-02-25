@@ -9,62 +9,56 @@ Families familiesFromJson(String str) => Families.fromJson(json.decode(str));
 String familiesToJson(Families data) => json.encode(data.toJson());
 
 class Families {
-    String? userId;
-    Relative? relative;
-    Relation? relation;
-    bool? status;
     DateTime? createdAt;
     DateTime? updatedAt;
+    bool? status;
+    Relative? relative;
+    Relation? relation;
 
     Families({
-        this.userId,
-        this.relative,
-        this.relation,
-        this.status,
         this.createdAt,
         this.updatedAt,
+        this.status,
+        this.relative,
+        this.relation,
     });
 
     Families copyWith({
-        String? userId,
-        Relative? relative,
-        Relation? relation,
-        bool? status,
         DateTime? createdAt,
         DateTime? updatedAt,
+        bool? status,
+        Relative? relative,
+        Relation? relation,
     }) => 
         Families(
-            userId: userId ?? this.userId,
-            relative: relative ?? this.relative,
-            relation: relation ?? this.relation,
-            status: status ?? this.status,
             createdAt: createdAt ?? this.createdAt,
             updatedAt: updatedAt ?? this.updatedAt,
+            status: status ?? this.status,
+            relative: relative ?? this.relative,
+            relation: relation ?? this.relation,
         );
 
     factory Families.fromJson(Map<String, dynamic> json) => Families(
-        userId: json["userId"],
-        relative: json["relative"] == null ? null : Relative.fromJson(json["relative"]),
-        relation: json["relation"] == null ? null : Relation.fromJson(json["relation"]),
-        status: json["status"],
         createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
         updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
+        status: json["status"],
+        relative: json["relative"] == null ? null : Relative.fromJson(json["relative"]),
+        relation: json["relation"] == null ? null : Relation.fromJson(json["relation"]),
     );
 
     Map<String, dynamic> toJson() => {
-        "userId": userId,
-        "relative": relative?.toJson(),
-        "relation": relation?.toJson(),
-        "status": status,
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
+        "status": status,
+        "relative": relative?.toJson(),
+        "relation": relation?.toJson(),
     };
 }
 
 class Relation {
     String? id;
     String? name;
-    String? reverseId;
+    dynamic reverseId;
 
     Relation({
         this.id,
@@ -75,7 +69,7 @@ class Relation {
     Relation copyWith({
         String? id,
         String? name,
-        String? reverseId,
+        dynamic reverseId,
     }) => 
         Relation(
             id: id ?? this.id,
@@ -99,14 +93,18 @@ class Relation {
 class Relative {
     String? id;
     String? fullName;
+    String? firstName;
+    String? lastName;
     String? email;
     String? phoneNumber;
-    DateTime? birthDate;
-    ProfileImage? profileImage;
+    dynamic birthDate;
+    dynamic profileImage;
 
     Relative({
         this.id,
         this.fullName,
+        this.firstName,
+        this.lastName,
         this.email,
         this.phoneNumber,
         this.birthDate,
@@ -116,14 +114,18 @@ class Relative {
     Relative copyWith({
         String? id,
         String? fullName,
+        String? firstName,
+        String? lastName,
         String? email,
         String? phoneNumber,
-        DateTime? birthDate,
-        ProfileImage? profileImage,
+        dynamic birthDate,
+        dynamic profileImage,
     }) => 
         Relative(
             id: id ?? this.id,
             fullName: fullName ?? this.fullName,
+            firstName: firstName ?? this.firstName,
+            lastName: lastName ?? this.lastName,
             email: email ?? this.email,
             phoneNumber: phoneNumber ?? this.phoneNumber,
             birthDate: birthDate ?? this.birthDate,
@@ -133,101 +135,22 @@ class Relative {
     factory Relative.fromJson(Map<String, dynamic> json) => Relative(
         id: json["id"],
         fullName: json["fullName"],
+        firstName: json["firstName"],
+        lastName: json["lastName"],
         email: json["email"],
         phoneNumber: json["phoneNumber"],
-        birthDate: json["birthDate"] == null ? null : DateTime.parse(json["birthDate"]),
-        profileImage: json["profileImage"] == null ? null : ProfileImage.fromJson(json["profileImage"]),
+        birthDate: json["birthDate"],
+        profileImage: json["profileImage"],
     );
 
     Map<String, dynamic> toJson() => {
         "id": id,
         "fullName": fullName,
+        "firstName": firstName,
+        "lastName": lastName,
         "email": email,
         "phoneNumber": phoneNumber,
-        "birthDate": birthDate?.toIso8601String(),
-        "profileImage": profileImage?.toJson(),
-    };
-}
-
-class ProfileImage {
-    String? id;
-    String? title;
-    String? description;
-    String? key;
-    String? url;
-    String? type;
-    String? fileExtension;
-    String? userId;
-    String? status;
-    DateTime? createdAt;
-    DateTime? updatedAt;
-
-    ProfileImage({
-        this.id,
-        this.title,
-        this.description,
-        this.key,
-        this.url,
-        this.type,
-        this.fileExtension,
-        this.userId,
-        this.status,
-        this.createdAt,
-        this.updatedAt,
-    });
-
-    ProfileImage copyWith({
-        String? id,
-        String? title,
-        String? description,
-        String? key,
-        String? url,
-        String? type,
-        String? fileExtension,
-        String? userId,
-        String? status,
-        DateTime? createdAt,
-        DateTime? updatedAt,
-    }) => 
-        ProfileImage(
-            id: id ?? this.id,
-            title: title ?? this.title,
-            description: description ?? this.description,
-            key: key ?? this.key,
-            url: url ?? this.url,
-            type: type ?? this.type,
-            fileExtension: fileExtension ?? this.fileExtension,
-            userId: userId ?? this.userId,
-            status: status ?? this.status,
-            createdAt: createdAt ?? this.createdAt,
-            updatedAt: updatedAt ?? this.updatedAt,
-        );
-
-    factory ProfileImage.fromJson(Map<String, dynamic> json) => ProfileImage(
-        id: json["id"],
-        title: json["title"],
-        description: json["description"],
-        key: json["key"],
-        url: json["url"],
-        type: json["type"],
-        fileExtension: json["fileExtension"],
-        userId: json["userId"],
-        status: json["status"],
-        createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
-        updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
-    );
-
-    Map<String, dynamic> toJson() => {
-        "id": id,
-        "title": title,
-        "description": description,
-        "key": key,
-        "url": url,
-        "type": type,
-        "fileExtension": fileExtension,
-        "userId": userId,
-        "status": status,
-        "createdAt": createdAt?.toIso8601String(),
-        "updatedAt": updatedAt?.toIso8601String(),
+        "birthDate": birthDate,
+        "profileImage": profileImage,
     };
 }

@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:book_app_m2m/models/challenges.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../widgets/snackbars.dart';
 import '../asset/asset_controller.dart';
 import 'challenge_repo.dart';
 
@@ -24,27 +28,58 @@ class ChallengeController extends StateNotifier<AsyncValue<List<Challenges>>> {
     }
   }
 
-  /// Create a new question and refresh the list
   Future<String> createChallenge({
+    required BuildContext context,
+    required File file,
     required String title,
     required String description,
     required List<String> taggedUsers,
-    required String coverImageId,
   }) async {
     state = const AsyncValue.loading();
     try {
+      final rowId = await repository.uploadAsset(file);
+      showSuccessSnackBar(context, "$rowId");
+      print("✅ File uploaded successfully");
+
       final message = await repository.createChallenge(
           title: title,
           description: description,
           taggedUsers: taggedUsers,
-          coverImageId: coverImageId);
+          coverImageId: rowId);
+      showSuccessSnackBar(context, message);
+      print("✅ Challenge created successfully: $message");
+      Navigator.pop(context);
+
       await fetchChallenges();
       return message;
     } catch (e, stack) {
+      showErrorSnackBar(context, e.toString());
       state = AsyncValue.error(e, stack);
       return e.toString();
     }
   }
+
+  /// Create a new question and refresh the list
+  // Future<String> createChallenge({
+  //   required String title,
+  //   required String description,
+  //   required List<String> taggedUsers,
+  //   required String coverImageId,
+  // }) async {
+  //   state = const AsyncValue.loading();
+  //   try {
+  //     final message = await repository.createChallenge(
+  //         title: title,
+  //         description: description,
+  //         taggedUsers: taggedUsers,
+  //         coverImageId: coverImageId);
+  //     await fetchChallenges();
+  //     return message;
+  //   } catch (e, stack) {
+  //     state = AsyncValue.error(e, stack);
+  //     return e.toString();
+  //   }
+  // }
 
   /// Update an existing question and refresh the list
   Future<String> updateChallenge({

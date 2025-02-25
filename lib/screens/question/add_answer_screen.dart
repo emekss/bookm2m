@@ -1,3 +1,4 @@
+import 'package:book_app_m2m/api/answer/answer_controller.dart';
 import 'package:book_app_m2m/components/custom_button.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:book_app_m2m/screens/assets/assets_screen.dart';
@@ -9,18 +10,28 @@ import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
-class AddAnswerScreen extends StatefulWidget {
-  const AddAnswerScreen({super.key});
+class AddAnswerScreen extends ConsumerStatefulWidget {
+  const AddAnswerScreen({
+    super.key,
+    required this.question,
+    required this.questionId,
+    required this.userId,
+  });
+
+  final String question, questionId, userId;
 
   @override
-  State<AddAnswerScreen> createState() => _AddAnswerScreenState();
+  ConsumerState<AddAnswerScreen> createState() => _AddAnswerScreenState();
 }
 
-class _AddAnswerScreenState extends State<AddAnswerScreen> {
+class _AddAnswerScreenState extends ConsumerState<AddAnswerScreen> {
+  final TextEditingController prompt = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final answerState = ref.watch(answerControllerProvider);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -143,151 +154,181 @@ class _AddAnswerScreenState extends State<AddAnswerScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: const Color.fromRGBO(67, 184, 136, 1),
-                  ),
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        SizedBox(
-                            height: 27,
-                            width: 27,
-                            child: Image.asset('assets/images/user.png')),
-                        SizedBox(width: 10),
-                        CustomText(
-                          text: 'Tabish Bin Tahir',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: const Color.fromRGBO(41, 42, 44, 1),
-                        ),
-                      ],
-                    ),
-                    CustomText(
-                      fontStyle: FontStyle.italic,
-                      text: 'Question 1 / Topic',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: const Color.fromRGBO(119, 119, 121, 1),
-                    ),
-                    SizedBox(height: 10),
-                    CustomText(
-                      text:
-                          'How would you describe our family\'s humour as if to a stranger?',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: const Color.fromRGBO(53, 49, 45, 1),
-                    ),
-                    const SizedBox(height: 10),
-                    Container(
-                      width: 85,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: const Color.fromRGBO(246, 246, 247, 1),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Center(
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/share_icon.svg',
-                            ),
-                            SizedBox(width: 5),
-                            CustomText(
-                              text: 'Share',
-                              fontSize: 14,
-                              color: const Color.fromRGBO(67, 184, 136, 1),
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              Container(
-                height: 57,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Color.fromRGBO(246, 246, 247, 1),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CustomText(
-                      text: 'Type here the answer',
-                      color: Color.fromRGBO(41, 42, 44, 0.61),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    Row(
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/copy_icon.svg',
-                          fit: BoxFit.scaleDown,
-                        ),
-                        SizedBox(width: 8),
-                        SvgPicture.asset(
-                          'assets/icons/mic_icon.svg',
-                          fit: BoxFit.scaleDown,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 10),
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  height: 47,
-                  padding:
-                      EdgeInsets.only(top: 13, bottom: 13, left: 10, right: 10),
-                  width: double.infinity,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
                     border: Border.all(
-                        color: const Color.fromRGBO(67, 184, 136, 1)),
+                      color: const Color.fromRGBO(67, 184, 136, 1),
+                    ),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SvgPicture.asset('assets/icons/upload_icon.svg'),
-                      SizedBox(width: 10),
+                      Row(
+                        children: [
+                          SizedBox(
+                              height: 27,
+                              width: 27,
+                              child: Image.asset('assets/images/user.png')),
+                          SizedBox(width: 10),
+                          CustomText(
+                            text: 'user id: ${widget.userId}',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: const Color.fromRGBO(41, 42, 44, 1),
+                          ),
+                        ],
+                      ),
                       CustomText(
-                        text: 'Upload Transcript (audio/video)',
-                        color: const Color.fromRGBO(67, 184, 136, 1),
-                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                        text: 'Question 1 / Topic',
+                        fontSize: 12,
                         fontWeight: FontWeight.w400,
+                        color: const Color.fromRGBO(119, 119, 121, 1),
+                      ),
+                      SizedBox(height: 10),
+                      CustomText(
+                        text: widget.question,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        color: const Color.fromRGBO(53, 49, 45, 1),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        width: 85,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(246, 246, 247, 1),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Center(
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/icons/share_icon.svg',
+                              ),
+                              SizedBox(width: 5),
+                              CustomText(
+                                text: 'Share',
+                                fontSize: 14,
+                                color: const Color.fromRGBO(67, 184, 136, 1),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              SizedBox(height: 100),
-              CustomButton(
-                  buttonTitle: 'Add',
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AnswerScreen()));
-                  })
-            ],
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Color.fromRGBO(246, 246, 247, 1),
+                    ),
+                    child: TextField(
+                      controller: prompt,
+                      scrollPadding: EdgeInsets.zero,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Type here the answer',
+                        hintStyle: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          color: Color.fromRGBO(41, 42, 44, 0.61),
+                        ),
+                        // suffixIcon: Icon(
+                        //   Icons.keyboard_arrow_down,
+                        //   color: Color.fromRGBO(110, 109, 121, 1),
+                        // ),
+                      ),
+                    ),
+                  ),
+                ),
+                // Container(
+                //   height: 57,
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(8),
+                //     color: Color.fromRGBO(246, 246, 247, 1),
+                //   ),
+                //   padding: EdgeInsets.symmetric(horizontal: 10),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       CustomText(
+                //         text: 'Type here the answer',
+                //         color: Color.fromRGBO(41, 42, 44, 0.61),
+                //         fontSize: 15,
+                //         fontWeight: FontWeight.w400,
+                //       ),
+                //       Row(
+                //         children: [
+                //           SvgPicture.asset(
+                //             'assets/icons/copy_icon.svg',
+                //             fit: BoxFit.scaleDown,
+                //           ),
+                //           SizedBox(width: 8),
+                //           SvgPicture.asset(
+                //             'assets/icons/mic_icon.svg',
+                //             fit: BoxFit.scaleDown,
+                //           ),
+                //         ],
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    height: 47,
+                    padding: EdgeInsets.only(
+                        top: 13, bottom: 13, left: 10, right: 10),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                          color: const Color.fromRGBO(67, 184, 136, 1)),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset('assets/icons/upload_icon.svg'),
+                        SizedBox(width: 10),
+                        CustomText(
+                          text: 'Upload Transcript (audio/video)',
+                          color: const Color.fromRGBO(67, 184, 136, 1),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 100),
+                CustomButton(
+                    buttonTitle:
+                        answerState is AsyncLoading ? 'Adding...' : 'Add',
+                    onTap: () {
+                      ref.read(answerControllerProvider.notifier).createAnswers(
+                          context: context,
+                          questionId: widget.questionId,
+                          prompt: prompt.text.trim());
+                    })
+              ],
+            ),
           ),
         ),
       ),

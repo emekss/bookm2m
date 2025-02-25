@@ -11,16 +11,19 @@ import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
-class CommunityScreen extends StatefulWidget {
+import '../../api/community/community_controller.dart';
+
+class CommunityScreen extends ConsumerStatefulWidget {
   const CommunityScreen({super.key});
 
   @override
-  State<CommunityScreen> createState() => _CommunityScreenState();
+  ConsumerState<CommunityScreen> createState() => _CommunityScreenState();
 }
 
-class _CommunityScreenState extends State<CommunityScreen> {
+class _CommunityScreenState extends ConsumerState<CommunityScreen> {
   // Your existing categories and questions lists remain the same
   final List<Map<String, String>> questions = [
     {
@@ -112,6 +115,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final communityState = ref.watch(communityControllerProvider);
     var media = MediaQuery.of(context).size;
     return Scaffold(
       extendBodyBehindAppBar: true,

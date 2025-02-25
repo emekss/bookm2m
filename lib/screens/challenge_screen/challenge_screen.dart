@@ -10,23 +10,29 @@ import 'package:book_app_m2m/screens/family/build_family_screen.dart';
 import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
-class ChallengeScreen extends StatefulWidget {
+import '../../api/challenge/challenge_controller.dart';
+
+class ChallengeScreen extends ConsumerStatefulWidget {
   const ChallengeScreen({super.key});
 
   @override
-  State<ChallengeScreen> createState() => _ChallengeScreenState();
+  ConsumerState<ChallengeScreen> createState() => _ChallengeScreenState();
 }
 
-class _ChallengeScreenState extends State<ChallengeScreen> {
+class _ChallengeScreenState extends ConsumerState<ChallengeScreen> {
+  final TextEditingController _searchController = TextEditingController();
   String? selectedValue;
   bool isDropdownOpen = false;
 
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
+    final challengeState = ref.watch(challengeControllerProvider);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       extendBodyBehindAppBar: true,
@@ -194,62 +200,157 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 47,
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: Color.fromRGBO(246, 246, 247, 1),
+                      Container(
+                        height: 47,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Color.fromRGBO(246, 246, 247, 1),
+                        ),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/search_icon.svg',
+                              fit: BoxFit.scaleDown,
                             ),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icons/search_icon.svg',
-                                  fit: BoxFit.scaleDown,
-                                ),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: TextField(
-                                    scrollPadding: EdgeInsets.zero,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: 'Search here',
-                                      hintStyle: TextStyle(
-                                        fontFamily: 'PlusJakartaSans',
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w400,
-                                        color: Color.fromRGBO(41, 42, 44, 0.61),
-                                      ),
-                                    ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: _searchController,
+                                scrollPadding: EdgeInsets.zero,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Search here',
+                                  hintStyle: TextStyle(
+                                    fontFamily: 'PlusJakartaSans',
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color.fromRGBO(41, 42, 44, 0.61),
                                   ),
                                 ),
-                                SvgPicture.asset(
-                                  'assets/icons/filter_icon.svg',
-                                  fit: BoxFit.scaleDown,
-                                ),
-                              ],
+                                onChanged: (query) {
+                                  ref
+                                      .read(
+                                          challengeControllerProvider.notifier)
+                                      .searchQuestions(query);
+                                },
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 10),
-                          ChallengeRow(),
-                          const SizedBox(height: 16),
-                          SizedBox(
-                            height: 545,
-                            child: ListView.builder(
-                                padding: EdgeInsets.zero,
-                                itemCount: 3,
-                                itemBuilder: (context, index) {
-                                  return ChallengeContainer();
-                                }),
-                          ),
-                          const SizedBox(height: 34),
-                        ],
+                            SvgPicture.asset(
+                              'assets/icons/filter_icon.svg',
+                              fit: BoxFit.scaleDown,
+                            ),
+                          ],
+                        ),
                       ),
+                      SizedBox(height: 10),
+                      ChallengeRow(),
+                      const SizedBox(height: 16),
+                      challengeState.when(
+                        data: (challenges) => challenges.isEmpty
+                            ? const Center(child: Text("No Challenge found"))
+                            : SizedBox(
+                                height: 500,
+                                child: ListView.builder(
+                                  itemCount: challenges.length,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    final challenge = challenges[index];
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      child: SizedBox(
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              height: 111,
+                                              width: 111,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(12)),
+                                                  image: DecorationImage(
+                                                      image: NetworkImage(
+                                                          challenge.coverImage!
+                                                              .url!),
+                                                      fit: BoxFit.cover)),
+                                            ),
+                                            SizedBox(width: 10),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    SizedBox(
+                                                        height: 22,
+                                                        width: 22,
+                                                        child: challenge
+                                                                    .coverImage !=
+                                                                null
+                                                            ? Image.network(
+                                                                challenge
+                                                                    .coverImage!
+                                                                    .url!)
+                                                            : Image.asset(
+                                                                'assets/images/user.png')),
+                                                    SizedBox(width: 8),
+                                                    CustomText(
+                                                      text:
+                                                          '${challenge.user!.firstName} ${challenge.user!.lastName}',
+                                                      color: Color.fromRGBO(
+                                                          14, 13, 30, 1),
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(height: 2),
+                                                CustomText(
+                                                  text:
+                                                      'Challenge Details goes here \nand this is line two',
+                                                  color: Color.fromRGBO(
+                                                      53, 49, 45, 1),
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 13,
+                                                ),
+                                                SizedBox(height: 8),
+                                                Row(
+                                                  children: [
+                                                    CustomText(
+                                                      text: 'Tagged',
+                                                      color: Color.fromRGBO(
+                                                          14, 13, 30, 1),
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 14,
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    SizedBox(
+                                                      height: 24,
+                                                      width: 78,
+                                                      child: Image.asset(
+                                                          'assets/images/asset_imagesss.png'),
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                        loading: () =>
+                            const Center(child: CupertinoActivityIndicator()),
+                        error: (e, _) => Center(child: Text("Error: $e")),
+                      ),
+                      const SizedBox(height: 34),
                     ],
                   ),
                 ),

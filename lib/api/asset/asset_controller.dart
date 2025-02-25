@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../dio_client.dart';
 import '../../models/asset.dart';
+import '../../widgets/snackbars.dart';
 import 'asset_repo.dart';
 
 // StateNotifier to manage asset list
@@ -20,7 +24,32 @@ class AssetController extends StateNotifier<AsyncValue<List<Assets>>> {
       _allAssets = assets;
       state = AsyncValue.data(assets);
     } catch (e, stack) {
+      print(e);
       state = AsyncValue.error(e, stack);
+    }
+  }
+
+  Future<String> createAssets({
+    required BuildContext context,
+    required File file,
+    required String description,
+    required String type,
+    required List<String> taggedUsers,
+  }) async {
+    state = const AsyncValue.loading();
+    try {
+      final msg =
+          await repository.uploadAsset(file, taggedUsers, type, description);
+      showSuccessSnackBar(context, "$msg");
+      print("✅ File uploaded successfully");
+
+      await fetchAssets();
+      Navigator.pop(context);
+      return msg;
+    } catch (e, stack) {
+      showErrorSnackBar(context, e.toString());
+      state = AsyncValue.error(e, stack);
+      return e.toString();
     }
   }
 

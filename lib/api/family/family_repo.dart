@@ -45,7 +45,7 @@ class FamilyRepository {
     } on DioException catch (e) {
       throw DioExceptions.fromDioError(e);
     } catch (e) {
-      throw Exception("Failed to create orders");
+      throw Exception(e);
     }
   }
 

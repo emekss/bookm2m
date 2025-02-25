@@ -9,6 +9,7 @@ import 'package:book_app_m2m/screens/family/build_family_screen.dart';
 import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
@@ -267,40 +268,177 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
                           assetState.when(
                             data: (assets) => assets.isEmpty
                                 ? const Center(child: Text("No assets found"))
-                                : ListView.builder(
+                                : GridView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: 16,
+                                      mainAxisSpacing: 16,
+                                      childAspectRatio: 0.62,
+                                    ),
                                     itemCount: assets.length,
                                     itemBuilder: (context, index) {
                                       final asset = assets[index];
-                                      return ListTile(
-                                        leading: Image.network(asset.url!,
-                                            width: 50,
-                                            height: 50,
-                                            fit: BoxFit.cover),
-                                        title: Text(asset.title!), 
-                                        subtitle: Text(asset.description ??
-                                            "No description"),
+                                      return GestureDetector(
+                                        onTap: () {
+                                          // Navigator.push(
+                                          //   context,
+                                          //   MaterialPageRoute(
+                                          //     builder: (context) =>
+                                          //         const BooksDetailScreen(),
+                                          //   ),
+                                          // );
+                                        },
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Stack(
+                                                fit: StackFit.expand,
+                                                alignment: Alignment.center,
+                                                children: [
+                                                  asset.url!.contains('pdf')
+                                                      ? Container(
+                                                          height: 167,
+                                                          width: 167,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          248,
+                                                                          249,
+                                                                          250,
+                                                                          1)),
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(50.0),
+                                                            child: SizedBox(
+                                                              height: 72,
+                                                              width: 72,
+                                                              child:
+                                                                  Image.asset(
+                                                                'assets/images/Pdf.png',
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : SizedBox(
+                                                          height: 210,
+                                                          width: 168,
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                            child:
+                                                                Image.network(
+                                                                    asset.url!,
+                                                                    width: 50,
+                                                                    height: 50,
+                                                                    fit: BoxFit
+                                                                        .cover),
+                                                          ),
+                                                        ),
+                                                  Positioned(
+                                                    top: 10,
+                                                    right: 10,
+                                                    child: Image.asset(
+                                                        'assets/icons/love_icon.png'),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            CustomText(
+                                              text: asset.title!,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color.fromRGBO(
+                                                  53, 49, 45, 1),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            CustomText(
+                                              text: asset.description!,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: const Color.fromRGBO(
+                                                  119, 119, 121, 1),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Row(
+                                              children: [
+                                                CustomText(
+                                                  text: 'Tagged',
+                                                  color: Color.fromRGBO(
+                                                      14, 13, 30, 1),
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 14,
+                                                ),
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                SizedBox(
+                                                  height: 50,
+                                                  child: ListView.builder(
+                                                      itemCount: asset
+                                                                  .taggedUsers !=
+                                                              null
+                                                          ? asset.taggedUsers!
+                                                                  .length +
+                                                              1
+                                                          : 0,
+                                                      scrollDirection:
+                                                          Axis.horizontal,
+                                                      shrinkWrap: true,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        // final question = data[index];
+                                                        return CircleAvatar(
+                                                          radius: 15,
+                                                          child: Center(
+                                                            child: Icon(
+                                                                Icons.person),
+                                                          ),
+                                                          backgroundColor:
+                                                              Colors.grey
+                                                                  .withOpacity(
+                                                                      .5),
+                                                        );
+                                                      }),
+                                                )
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       );
                                     },
                                   ),
                             loading: () => const Center(
-                                child: CircularProgressIndicator()),
+                                child: CupertinoActivityIndicator()),
                             error: (e, _) => Center(child: Text("Error: $e")),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              AssetsContainer(),
-                              AssetsContainer(),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              AssetsPdfContainer(),
-                              AssetsPdfContainer(),
-                            ],
-                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          //   children: [
+                          //     AssetsContainer(),
+                          //     AssetsContainer(),
+                          //   ],
+                          // ),
+                          // const SizedBox(height: 16),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          //   children: [
+                          //     AssetsPdfContainer(),
+                          //     AssetsPdfContainer(),
+                          //   ],
+                          // ),
                           const SizedBox(height: 24),
                         ],
                       ),

@@ -10,11 +10,13 @@ import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/add_answer_screen.dart';
 import 'package:book_app_m2m/screens/question/add_question_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
 import '../../api/questions/questions_controller.dart';
+import 'edit_question_screen.dart';
 
 class QuestionScreen extends ConsumerStatefulWidget {
   const QuestionScreen({super.key});
@@ -24,6 +26,7 @@ class QuestionScreen extends ConsumerStatefulWidget {
 }
 
 class _QuestionScreenState extends ConsumerState<QuestionScreen> {
+  final TextEditingController _searchController = TextEditingController();
   String? selectedValue;
   bool isDropdownOpen = false;
 
@@ -204,6 +207,7 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                       const SizedBox(width: 10),
                       Expanded(
                         child: TextField(
+                          controller: _searchController,
                           scrollPadding: EdgeInsets.zero,
                           decoration: const InputDecoration(
                             border: InputBorder.none,
@@ -215,6 +219,11 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                               color: Color.fromRGBO(41, 42, 44, 0.61),
                             ),
                           ),
+                          onChanged: (query) {
+                            ref
+                                .read(questionsControllerProvider.notifier)
+                                .searchQuestions(query);
+                          },
                         ),
                       ),
                       SvgPicture.asset(
@@ -244,218 +253,245 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                 physics: ClampingScrollPhysics(),
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      QuestionsRow(),
                       Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          QuestionsRow(),
-                          const SizedBox(height: 16),
-                          Column(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                      color: const Color.fromRGBO(
-                                          67, 184, 136, 1)),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CustomText(
-                                      fontStyle: FontStyle.italic,
-                                      text: 'Question 1 / Topic',
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                      color: const Color.fromRGBO(
-                                          119, 119, 121, 1),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    CustomText(
-                                      text:
-                                          'How would you describe our family\'s humour as if to a stranger?',
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                      color:
-                                          const Color.fromRGBO(53, 49, 45, 1),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 8,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: const Color.fromRGBO(
-                                                  67, 184, 136, 1),
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(30),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              SvgPicture.asset(
-                                                  'assets/icons/edit_icon.svg'),
-                                              SizedBox(width: 4),
-                                              const CustomText(
-                                                text: 'Edit',
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400,
-                                                color: Color.fromRGBO(
-                                                    67, 184, 136, 1),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 8,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                Color.fromRGBO(251, 5, 108, 1),
-                                            borderRadius:
-                                                BorderRadius.circular(30),
-                                          ),
-                                          child: const CustomText(
-                                            text: 'Delete',
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Container(
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(246, 246, 247, 1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                            'assets/icons/question_user.svg'),
-                                        SizedBox(width: 10),
-                                        CustomText(
-                                          text: 'Tabish Bin Tahir',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: const Color.fromRGBO(
-                                              41, 42, 44, 1),
-                                        ),
-                                      ],
-                                    ),
-                                    CustomText(
-                                      text:
-                                          'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem psum has been the industry\'s standard dummy text ever since the 1500s, when an unknown.',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: const Color.fromRGBO(
-                                          119, 119, 121, 1),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: Color.fromRGBO(246, 246, 247, 1),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 3),
-                                child: TextField(
-                                  scrollPadding: EdgeInsets.zero,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'Type here or hold mic to speak',
-                                    hintStyle: TextStyle(
-                                      fontFamily: 'PlusJakartaSans',
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color.fromRGBO(41, 42, 44, 0.61),
-                                    ),
-                                    suffixIcon: SvgPicture.asset(
-                                      'assets/icons/mic_icon.svg',
-                                      fit: BoxFit.scaleDown,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          CustomButton(
-                              buttonTitle: 'Add Answer',
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddAnswerScreen(),
-                                  ),
-                                );
-                              }),
-                          SizedBox(height: 20),
                           questionsState.when(
                               data: (data) {
                                 return data.isEmpty
                                     ? Text('No Questions')
                                     : ListView.builder(
-                                        itemCount: questionsState.value!.length,
+                                        itemCount: data.length,
                                         shrinkWrap: true,
                                         itemBuilder: (context, index) {
-                                          final question =
-                                              questionsState.value![index];
-                                          return Container(
-                                            padding: const EdgeInsets.all(20),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              border: Border.all(
-                                                  color: const Color.fromRGBO(
-                                                      228, 228, 235, 1)),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                CustomText(
-                                                  fontStyle: FontStyle.italic,
-                                                  text:
-                                                      'Question ${questionsState.value![index]} / Topic',
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: const Color.fromRGBO(
-                                                      119, 119, 121, 1),
+                                          final question = data[index];
+                                          return Column(
+                                            children: [
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.all(20),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border.all(
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                              67, 184, 136, 1)),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
                                                 ),
-                                                const SizedBox(height: 4),
-                                                CustomText(
-                                                  text: '${question.prompt}',
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: const Color.fromRGBO(
-                                                      53, 49, 45, 1),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    CustomText(
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                      text:
+                                                          'Question ${index + 1} / Topic',
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                              119, 119, 121, 1),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    CustomText(
+                                                      text: '${question.help}',
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                              53, 49, 45, 1),
+                                                    ),
+                                                    const SizedBox(height: 10),
+                                                    Row(
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        EditQuestionScreen(
+                                                                  topicId: question
+                                                                      .topicId!,
+                                                                  prompt: question
+                                                                      .prompt!,
+                                                                  help: question
+                                                                      .help!,
+                                                                  questionId:
+                                                                      question
+                                                                          .id!,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                              horizontal: 16,
+                                                              vertical: 8,
+                                                            ),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              border:
+                                                                  Border.all(
+                                                                color: const Color
+                                                                    .fromRGBO(
+                                                                    67,
+                                                                    184,
+                                                                    136,
+                                                                    1),
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          30),
+                                                            ),
+                                                            child: Row(
+                                                              children: [
+                                                                SvgPicture.asset(
+                                                                    'assets/icons/edit_icon.svg'),
+                                                                SizedBox(
+                                                                    width: 4),
+                                                                const CustomText(
+                                                                  text: 'Edit',
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          67,
+                                                                          184,
+                                                                          136,
+                                                                          1),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 8),
+                                                        GestureDetector(
+                                                          onTap: () async {
+                                                            final shouldDelete =
+                                                                await showDialog<
+                                                                    bool>(
+                                                              context: context,
+                                                              builder:
+                                                                  (context) {
+                                                                return AlertDialog(
+                                                                  title: Text(
+                                                                      "Confirm Delete"),
+                                                                  content: Text(
+                                                                      "Are you sure you want to delete this question?"),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      onPressed: () => Navigator.pop(
+                                                                          context,
+                                                                          false), // Cancel
+                                                                      child: Text(
+                                                                          "Cancel"),
+                                                                    ),
+                                                                    TextButton(
+                                                                      onPressed: () => Navigator.pop(
+                                                                          context,
+                                                                          true), // Confirm
+                                                                      child: Text(
+                                                                          "Delete",
+                                                                          style:
+                                                                              TextStyle(color: Colors.red)),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+
+                                                            if (shouldDelete ==
+                                                                true) {
+                                                              final message = await ref
+                                                                  .read(questionsControllerProvider
+                                                                      .notifier)
+                                                                  .deleteQuestion(
+                                                                    context,
+                                                                      question
+                                                                          .id!);
+                                                              ScaffoldMessenger
+                                                                      .of(context)
+                                                                  .showSnackBar(
+                                                                SnackBar(
+                                                                    content: Text(
+                                                                        message)),
+                                                              );
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                              horizontal: 16,
+                                                              vertical: 8,
+                                                            ),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      251,
+                                                                      5,
+                                                                      108,
+                                                                      1),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          30),
+                                                            ),
+                                                            child:
+                                                                const CustomText(
+                                                              text: 'Delete',
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                              SizedBox(height: 20),
+                                              CustomButton(
+                                                  buttonTitle: 'Add Answer',
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AddAnswerScreen(
+                                                          question:
+                                                              question.prompt!,
+                                                          questionId:
+                                                              question.id!,
+                                                          userId:
+                                                              question.userId!,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }),
+                                            ],
                                           );
                                         },
                                       );
@@ -463,87 +499,7 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                               error: (error, st) =>
                                   Center(child: Text("Error: $error")),
                               loading: () => const Center(
-                                  child: CircularProgressIndicator())),
-//                           if (questionsState.isLoading) {
-//   return const Center(child: CircularProgressIndicator());
-// } else if (questionsState.hasError) {
-//   return Center(child: Text("Error: ${questionsState.error}"));
-// } else if (questionsState.hasValue && questionsState.value!.isEmpty) {
-//   return const Center(child: Text("No questions found."));
-// } else {
-//   return ListView.builder(
-//     itemCount: questionsState.value!.length,
-//     itemBuilder: (context, index) {
-//       final question = questionsState.value![index];
-//       return ListTile(
-//         title: Text(question.prompt ?? "No prompt"),
-//         subtitle: Text(question.help ?? "No help text"),
-//       );
-//     },
-//   );
-// }
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                  color:
-                                      const Color.fromRGBO(228, 228, 235, 1)),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomText(
-                                  fontStyle: FontStyle.italic,
-                                  text: 'Question 1 / Topic',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color.fromRGBO(119, 119, 121, 1),
-                                ),
-                                const SizedBox(height: 4),
-                                CustomText(
-                                  text:
-                                      'How would you describe our family\'s humour as if to a stranger?',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color.fromRGBO(53, 49, 45, 1),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                  color:
-                                      const Color.fromRGBO(228, 228, 235, 1)),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomText(
-                                  fontStyle: FontStyle.italic,
-                                  text: 'Question 1 / Topic',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color.fromRGBO(119, 119, 121, 1),
-                                ),
-                                const SizedBox(height: 4),
-                                CustomText(
-                                  text:
-                                      'How would you describe our family\'s humour as if to a stranger?',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color.fromRGBO(53, 49, 45, 1),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 24),
+                                  child: CupertinoActivityIndicator())),
                         ],
                       ),
                     ],

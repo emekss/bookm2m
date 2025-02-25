@@ -9,21 +9,53 @@ import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
-class EditQuestionScreen extends StatefulWidget {
-  const EditQuestionScreen({super.key});
+import '../../api/questions/questions_controller.dart';
+
+class EditQuestionScreen extends ConsumerStatefulWidget {
+  const EditQuestionScreen(
+      {super.key,
+      required this.topicId,
+      required this.prompt,
+      required this.help,
+      required this.questionId});
+
+  final String topicId, prompt, help, questionId;
 
   @override
-  State<EditQuestionScreen> createState() => _EditQuestionScreenState();
+  ConsumerState<EditQuestionScreen> createState() => _EditQuestionScreenState();
 }
 
-class _EditQuestionScreenState extends State<EditQuestionScreen> {
+class _EditQuestionScreenState extends ConsumerState<EditQuestionScreen> {
   String? selectedValue;
   bool isDropdownOpen = false;
+  final TextEditingController questionController = TextEditingController();
+
+  Future<void> submitForm() async {
+    if (questionController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Enter an edit for the question")),
+      );
+      return;
+    }
+    print(widget.questionId);
+    print(widget.prompt);
+    print(widget.help);
+    print(widget.topicId);
+    ref.read(questionsControllerProvider.notifier).updateQuestion(
+        context: context,
+        questionId: widget.questionId,
+        prompt: widget.prompt,
+        help: widget.help,
+        topicId: widget.topicId,
+        status: true);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final questionState = ref.watch(questionsControllerProvider);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -146,90 +178,95 @@ class _EditQuestionScreenState extends State<EditQuestionScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Color.fromRGBO(246, 246, 247, 1),
+                    ),
+                    child: TextField(
+                      scrollPadding: EdgeInsets.zero,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Topic',
+                          hintStyle: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            color: Color.fromRGBO(41, 42, 44, 0.61),
+                          ),
+                          suffixIcon: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Color.fromRGBO(110, 109, 121, 1),
+                          )),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  padding:
+                      EdgeInsets.only(left: 10, bottom: 40, right: 10, top: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     color: Color.fromRGBO(246, 246, 247, 1),
                   ),
                   child: TextField(
+                    controller: questionController,
+                    scrollPadding: EdgeInsets.zero,
+                    maxLines: 2,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: widget.prompt,
+                      hintStyle: TextStyle(
+                        fontFamily: 'PlusJakartaSans',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        color: Color.fromRGBO(41, 42, 44, 0.61),
+                      ),
+                      suffixIcon: SvgPicture.asset(
+                        'assets/icons/mic_icon.svg',
+                        height: 31,
+                        width: 31,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Color.fromRGBO(246, 246, 247, 1),
+                  ),
+                  padding: EdgeInsets.only(left: 10, bottom: 80),
+                  child: TextField(
+                    enabled: false,
                     scrollPadding: EdgeInsets.zero,
                     decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Topic',
-                        hintStyle: TextStyle(
-                          fontFamily: 'PlusJakartaSans',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          color: Color.fromRGBO(41, 42, 44, 0.61),
-                        ),
-                        suffixIcon: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Color.fromRGBO(110, 109, 121, 1),
-                        )),
-                  ),
-                ),
-              ),
-              SizedBox(height: 10),
-              Container(
-                padding:
-                    EdgeInsets.only(left: 10, bottom: 40, right: 10, top: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Color.fromRGBO(246, 246, 247, 1),
-                ),
-                child: TextField(
-                  scrollPadding: EdgeInsets.zero,
-                  maxLines: 2,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText:
-                        'How would you describe our family\'s \nhumor as if to a stranger?',
-                    hintStyle: TextStyle(
-                      fontFamily: 'PlusJakartaSans',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: Color.fromRGBO(41, 42, 44, 0.61),
-                    ),
-                    suffixIcon: SvgPicture.asset(
-                      'assets/icons/mic_icon.svg',
-                      height: 31,
-                      width: 31,
+                      border: InputBorder.none,
+                      hintText: 'Question Help: ${widget.help}',
+                      hintStyle: TextStyle(
+                        fontFamily: 'PlusJakartaSans',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        color: Color.fromRGBO(41, 42, 44, 0.61),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 10),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Color.fromRGBO(246, 246, 247, 1),
-                ),
-                padding: EdgeInsets.only(left: 10, bottom: 80),
-                child: TextField(
-                  scrollPadding: EdgeInsets.zero,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Question Help',
-                    hintStyle: TextStyle(
-                      fontFamily: 'PlusJakartaSans',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: Color.fromRGBO(41, 42, 44, 0.61),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 10),
-              CustomButton(
-                buttonTitle: 'Save',
-                onTap: () {},
-              )
-            ],
+                SizedBox(height: 10),
+                CustomButton(
+                  buttonTitle:
+                      questionState is AsyncLoading ? 'Saving...' : 'Save',
+                  onTap: () =>
+                      questionState is AsyncLoading ? null : submitForm(),
+                )
+              ],
+            ),
           ),
         ),
       ),

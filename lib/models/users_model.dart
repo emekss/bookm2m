@@ -1,14 +1,15 @@
 // To parse this JSON data, do
 //
-//     final assets = assetsFromJson(jsonString);
+//     final usersModel = usersModelFromJson(jsonString);
 
 import 'dart:convert';
 
-Assets assetsFromJson(String str) => Assets.fromJson(json.decode(str));
+UsersModel usersModelFromJson(String str) =>
+    UsersModel.fromJson(json.decode(str));
 
-String assetsToJson(Assets data) => json.encode(data.toJson());
+String usersModelToJson(UsersModel data) => json.encode(data.toJson());
 
-class TaggedUser {
+class UsersModel {
   String? id;
   String? firstName;
   String? lastName;
@@ -16,16 +17,16 @@ class TaggedUser {
   String? email;
   String? motivationalQuote;
   DateTime? birthDate;
-  Assets? profileImage;
+  ProfileImage? profileImage;
   String? role;
-  bool? status;
+  String? status;
   DateTime? lastSeen;
-  String? isEmailVerified;
+  bool? isEmailVerified;
   DateTime? createdAt;
   DateTime? updatedAt;
-  TaggedUserCount? count;
+  Count? count;
 
-  TaggedUser({
+  UsersModel({
     this.id,
     this.firstName,
     this.lastName,
@@ -43,7 +44,7 @@ class TaggedUser {
     this.count,
   });
 
-  TaggedUser copyWith({
+  UsersModel copyWith({
     String? id,
     String? firstName,
     String? lastName,
@@ -51,16 +52,16 @@ class TaggedUser {
     String? email,
     String? motivationalQuote,
     DateTime? birthDate,
-    Assets? profileImage,
+    ProfileImage? profileImage,
     String? role,
-    bool? status,
+    String? status,
     DateTime? lastSeen,
-    String? isEmailVerified,
+    bool? isEmailVerified,
     DateTime? createdAt,
     DateTime? updatedAt,
-    TaggedUserCount? count,
+    Count? count,
   }) =>
-      TaggedUser(
+      UsersModel(
         id: id ?? this.id,
         firstName: firstName ?? this.firstName,
         lastName: lastName ?? this.lastName,
@@ -78,7 +79,7 @@ class TaggedUser {
         count: count ?? this.count,
       );
 
-  factory TaggedUser.fromJson(Map<String, dynamic> json) => TaggedUser(
+  factory UsersModel.fromJson(Map<String, dynamic> json) => UsersModel(
         id: json["id"],
         firstName: json["firstName"],
         lastName: json["lastName"],
@@ -90,7 +91,7 @@ class TaggedUser {
             : DateTime.parse(json["birthDate"]),
         profileImage: json["profileImage"] == null
             ? null
-            : Assets.fromJson(json["profileImage"]),
+            : ProfileImage.fromJson(json["profileImage"]),
         role: json["role"],
         status: json["status"],
         lastSeen:
@@ -102,9 +103,7 @@ class TaggedUser {
         updatedAt: json["updatedAt"] == null
             ? null
             : DateTime.parse(json["updatedAt"]),
-        count: json["_count"] == null
-            ? null
-            : TaggedUserCount.fromJson(json["_count"]),
+        count: json["_count"] == null ? null : Count.fromJson(json["_count"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -126,7 +125,84 @@ class TaggedUser {
       };
 }
 
-class Assets {
+class Count {
+  int? books;
+  int? assets;
+  int? challengesCreated;
+  int? questionsCreated;
+  int? relatives;
+  int? taggedInAssets;
+  int? taggedInQuestions;
+  int? taggedInChallenges;
+  int? membersInCommunities;
+  int? communitiesCreated;
+
+  Count({
+    this.books,
+    this.assets,
+    this.challengesCreated,
+    this.questionsCreated,
+    this.relatives,
+    this.taggedInAssets,
+    this.taggedInQuestions,
+    this.taggedInChallenges,
+    this.membersInCommunities,
+    this.communitiesCreated,
+  });
+
+  Count copyWith({
+    int? books,
+    int? assets,
+    int? challengesCreated,
+    int? questionsCreated,
+    int? relatives,
+    int? taggedInAssets,
+    int? taggedInQuestions,
+    int? taggedInChallenges,
+    int? membersInCommunities,
+    int? communitiesCreated,
+  }) =>
+      Count(
+        books: books ?? this.books,
+        assets: assets ?? this.assets,
+        challengesCreated: challengesCreated ?? this.challengesCreated,
+        questionsCreated: questionsCreated ?? this.questionsCreated,
+        relatives: relatives ?? this.relatives,
+        taggedInAssets: taggedInAssets ?? this.taggedInAssets,
+        taggedInQuestions: taggedInQuestions ?? this.taggedInQuestions,
+        taggedInChallenges: taggedInChallenges ?? this.taggedInChallenges,
+        membersInCommunities: membersInCommunities ?? this.membersInCommunities,
+        communitiesCreated: communitiesCreated ?? this.communitiesCreated,
+      );
+
+  factory Count.fromJson(Map<String, dynamic> json) => Count(
+        books: json["books"],
+        assets: json["assets"],
+        challengesCreated: json["challengesCreated"],
+        questionsCreated: json["questionsCreated"],
+        relatives: json["relatives"],
+        taggedInAssets: json["taggedInAssets"],
+        taggedInQuestions: json["taggedInQuestions"],
+        taggedInChallenges: json["taggedInChallenges"],
+        membersInCommunities: json["membersInCommunities"],
+        communitiesCreated: json["communitiesCreated"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "books": books,
+        "assets": assets,
+        "challengesCreated": challengesCreated,
+        "questionsCreated": questionsCreated,
+        "relatives": relatives,
+        "taggedInAssets": taggedInAssets,
+        "taggedInQuestions": taggedInQuestions,
+        "taggedInChallenges": taggedInChallenges,
+        "membersInCommunities": membersInCommunities,
+        "communitiesCreated": communitiesCreated,
+      };
+}
+
+class ProfileImage {
   String? id;
   String? title;
   String? description;
@@ -135,13 +211,11 @@ class Assets {
   String? type;
   String? fileExtension;
   String? userId;
-  bool? status;
+  String? status;
   DateTime? createdAt;
   DateTime? updatedAt;
-  List<TaggedUser>? taggedUsers;
-  AssetsCount? count;
 
-  Assets({
+  ProfileImage({
     this.id,
     this.title,
     this.description,
@@ -153,11 +227,9 @@ class Assets {
     this.status,
     this.createdAt,
     this.updatedAt,
-    this.taggedUsers,
-    this.count,
   });
 
-  Assets copyWith({
+  ProfileImage copyWith({
     String? id,
     String? title,
     String? description,
@@ -166,13 +238,11 @@ class Assets {
     String? type,
     String? fileExtension,
     String? userId,
-    bool? status,
+    String? status,
     DateTime? createdAt,
     DateTime? updatedAt,
-    List<TaggedUser>? taggedUsers,
-    AssetsCount? count,
   }) =>
-      Assets(
+      ProfileImage(
         id: id ?? this.id,
         title: title ?? this.title,
         description: description ?? this.description,
@@ -184,11 +254,9 @@ class Assets {
         status: status ?? this.status,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
-        taggedUsers: taggedUsers ?? this.taggedUsers,
-        count: count ?? this.count,
       );
 
-  factory Assets.fromJson(Map<String, dynamic> json) => Assets(
+  factory ProfileImage.fromJson(Map<String, dynamic> json) => ProfileImage(
         id: json["id"],
         title: json["title"],
         description: json["description"],
@@ -204,13 +272,6 @@ class Assets {
         updatedAt: json["updatedAt"] == null
             ? null
             : DateTime.parse(json["updatedAt"]),
-        taggedUsers: json["taggedUsers"] == null
-            ? []
-            : List<TaggedUser>.from(
-                json["taggedUsers"]!.map((x) => TaggedUser.fromJson(x))),
-        count: json["_count"] == null
-            ? null
-            : AssetsCount.fromJson(json["_count"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -225,98 +286,5 @@ class Assets {
         "status": status,
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
-        "taggedUsers": taggedUsers == null
-            ? []
-            : List<dynamic>.from(taggedUsers!.map((x) => x.toJson())),
-        "_count": count?.toJson(),
-      };
-}
-
-class TaggedUserCount {
-  int? books;
-  int? assets;
-  int? challengesCreated;
-  int? questionsCreated;
-  int? relatives;
-  int? taggedInAssets;
-  int? taggedInQuestions;
-  int? taggedInChallenges;
-
-  TaggedUserCount({
-    this.books,
-    this.assets,
-    this.challengesCreated,
-    this.questionsCreated,
-    this.relatives,
-    this.taggedInAssets,
-    this.taggedInQuestions,
-    this.taggedInChallenges,
-  });
-
-  TaggedUserCount copyWith({
-    int? books,
-    int? assets,
-    int? challengesCreated,
-    int? questionsCreated,
-    int? relatives,
-    int? taggedInAssets,
-    int? taggedInQuestions,
-    int? taggedInChallenges,
-  }) =>
-      TaggedUserCount(
-        books: books ?? this.books,
-        assets: assets ?? this.assets,
-        challengesCreated: challengesCreated ?? this.challengesCreated,
-        questionsCreated: questionsCreated ?? this.questionsCreated,
-        relatives: relatives ?? this.relatives,
-        taggedInAssets: taggedInAssets ?? this.taggedInAssets,
-        taggedInQuestions: taggedInQuestions ?? this.taggedInQuestions,
-        taggedInChallenges: taggedInChallenges ?? this.taggedInChallenges,
-      );
-
-  factory TaggedUserCount.fromJson(Map<String, dynamic> json) =>
-      TaggedUserCount(
-        books: json["books"],
-        assets: json["assets"],
-        challengesCreated: json["challengesCreated"],
-        questionsCreated: json["questionsCreated"],
-        relatives: json["relatives"],
-        taggedInAssets: json["taggedInAssets"],
-        taggedInQuestions: json["taggedInQuestions"],
-        taggedInChallenges: json["taggedInChallenges"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "books": books,
-        "assets": assets,
-        "challengesCreated": challengesCreated,
-        "questionsCreated": questionsCreated,
-        "relatives": relatives,
-        "taggedInAssets": taggedInAssets,
-        "taggedInQuestions": taggedInQuestions,
-        "taggedInChallenges": taggedInChallenges,
-      };
-}
-
-class AssetsCount {
-  int? taggedUsers;
-
-  AssetsCount({
-    this.taggedUsers,
-  });
-
-  AssetsCount copyWith({
-    int? taggedUsers,
-  }) =>
-      AssetsCount(
-        taggedUsers: taggedUsers ?? this.taggedUsers,
-      );
-
-  factory AssetsCount.fromJson(Map<String, dynamic> json) => AssetsCount(
-        taggedUsers: json["taggedUsers"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "taggedUsers": taggedUsers,
       };
 }

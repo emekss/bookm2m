@@ -1,4 +1,6 @@
 import 'package:book_app_m2m/api/questions/questions_repo.dart';
+import 'package:book_app_m2m/widgets/snackbars.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/asset.dart';
@@ -26,11 +28,11 @@ class QuestionsController extends StateNotifier<AsyncValue<List<Questions>>> {
   }
 
   /// Create a new question and refresh the list
-  Future<String> createQuestion({
-    required String prompt,
-    required String help,
-    required String topicId,
-  }) async {
+  Future<String> createQuestion(
+      {required String prompt,
+      required String help,
+      required String topicId,
+      required BuildContext context}) async {
     state = const AsyncValue.loading();
     try {
       final message = await repository.createQuestion(
@@ -39,8 +41,11 @@ class QuestionsController extends StateNotifier<AsyncValue<List<Questions>>> {
         topicId: topicId,
       );
       await fetchQuestions(); // Refresh questions list
+      showSuccessSnackBar(context, message);
+      Navigator.pop(context);
       return message;
     } catch (e, stack) {
+      showErrorSnackBar(context, e.toString());
       state = AsyncValue.error(e, stack);
       return e.toString();
     }
@@ -48,13 +53,14 @@ class QuestionsController extends StateNotifier<AsyncValue<List<Questions>>> {
 
   /// Update an existing question and refresh the list
   Future<String> updateQuestion({
+    required BuildContext context,
     required String questionId,
     required String prompt,
     required String help,
     required String topicId,
-    required String status,
+    required bool status,
   }) async {
-     state = const AsyncValue.loading();
+    state = const AsyncValue.loading();
     try {
       final message = await repository.updateQuestion(
         questionId: questionId,
@@ -63,20 +69,23 @@ class QuestionsController extends StateNotifier<AsyncValue<List<Questions>>> {
         topicId: topicId,
         status: status,
       );
+      showSuccessSnackBar(context, message);
       await fetchQuestions(); // Refresh questions list
       return message;
     } catch (e, stack) {
-       state = AsyncValue.error(e, stack);
+      showErrorSnackBar(context, e.toString());
+      state = AsyncValue.error(e, stack);
       return e.toString();
     }
   }
 
   /// Delete a question and refresh the list
-  Future<String> deleteQuestion(String questionId) async {
+  Future<String> deleteQuestion(BuildContext context, String questionId) async {
     state = const AsyncValue.loading();
     try {
       final message = await repository.deleteQuestion(questionId);
-      await fetchQuestions(); // Refresh questions list
+      await fetchQuestions(); 
+       showSuccessSnackBar(context, message);// Refresh questions list
       return message;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
