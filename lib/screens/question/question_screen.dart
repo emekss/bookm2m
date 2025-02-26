@@ -268,230 +268,244 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                                     : ListView.builder(
                                         itemCount: data.length,
                                         shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
                                         itemBuilder: (context, index) {
                                           final question = data[index];
-                                          return Column(
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.all(20),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(
-                                                      color:
-                                                          const Color.fromRGBO(
-                                                              67, 184, 136, 1)),
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    CustomText(
-                                                      fontStyle:
-                                                          FontStyle.italic,
-                                                      text:
-                                                          'Question ${index + 1} / Topic',
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color:
-                                                          const Color.fromRGBO(
-                                                              119, 119, 121, 1),
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    CustomText(
-                                                      text: '${question.help}',
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color:
-                                                          const Color.fromRGBO(
-                                                              53, 49, 45, 1),
-                                                    ),
-                                                    const SizedBox(height: 10),
-                                                    Row(
-                                                      children: [
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        EditQuestionScreen(
-                                                                  topicId: question
-                                                                      .topicId!,
-                                                                  prompt: question
-                                                                      .prompt!,
-                                                                  help: question
-                                                                      .help!,
-                                                                  questionId:
-                                                                      question
-                                                                          .id!,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          },
-                                                          child: Container(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                              horizontal: 16,
-                                                              vertical: 8,
-                                                            ),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              border:
-                                                                  Border.all(
-                                                                color: const Color
-                                                                    .fromRGBO(
-                                                                    67,
-                                                                    184,
-                                                                    136,
-                                                                    1),
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          30),
-                                                            ),
-                                                            child: Row(
-                                                              children: [
-                                                                SvgPicture.asset(
-                                                                    'assets/icons/edit_icon.svg'),
-                                                                SizedBox(
-                                                                    width: 4),
-                                                                const CustomText(
-                                                                  text: 'Edit',
-                                                                  fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          67,
-                                                                          184,
-                                                                          136,
-                                                                          1),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 8),
-                                                        GestureDetector(
-                                                          onTap: () async {
-                                                            final shouldDelete =
-                                                                await showDialog<
-                                                                    bool>(
-                                                              context: context,
-                                                              builder:
-                                                                  (context) {
-                                                                return AlertDialog(
-                                                                  title: Text(
-                                                                      "Confirm Delete"),
-                                                                  content: Text(
-                                                                      "Are you sure you want to delete this question?"),
-                                                                  actions: [
-                                                                    TextButton(
-                                                                      onPressed: () => Navigator.pop(
-                                                                          context,
-                                                                          false), // Cancel
-                                                                      child: Text(
-                                                                          "Cancel"),
-                                                                    ),
-                                                                    TextButton(
-                                                                      onPressed: () => Navigator.pop(
-                                                                          context,
-                                                                          true), // Confirm
-                                                                      child: Text(
-                                                                          "Delete",
-                                                                          style:
-                                                                              TextStyle(color: Colors.red)),
-                                                                    ),
-                                                                  ],
-                                                                );
-                                                              },
-                                                            );
-
-                                                            if (shouldDelete ==
-                                                                true) {
-                                                              final message = await ref
-                                                                  .read(questionsControllerProvider
-                                                                      .notifier)
-                                                                  .deleteQuestion(
-                                                                    context,
-                                                                      question
-                                                                          .id!);
-                                                              ScaffoldMessenger
-                                                                      .of(context)
-                                                                  .showSnackBar(
-                                                                SnackBar(
-                                                                    content: Text(
-                                                                        message)),
-                                                              );
-                                                            }
-                                                          },
-                                                          child: Container(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                              horizontal: 16,
-                                                              vertical: 8,
-                                                            ),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      251,
-                                                                      5,
-                                                                      108,
-                                                                      1),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          30),
-                                                            ),
-                                                            child:
-                                                                const CustomText(
-                                                              text: 'Delete',
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(height: 20),
-                                              CustomButton(
-                                                  buttonTitle: 'Add Answer',
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            AddAnswerScreen(
-                                                          question:
-                                                              question.prompt!,
-                                                          questionId:
-                                                              question.id!,
-                                                          userId:
-                                                              question.userId!,
-                                                        ),
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Column(
+                                              children: [
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.all(20),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    border: Border.all(
+                                                        color: const Color
+                                                            .fromRGBO(
+                                                            67, 184, 136, 1)),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      CustomText(
+                                                        fontStyle:
+                                                            FontStyle.italic,
+                                                        text:
+                                                            'Question ${index + 1} / Topic',
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: const Color
+                                                            .fromRGBO(
+                                                            119, 119, 121, 1),
                                                       ),
-                                                    );
-                                                  }),
-                                            ],
+                                                      const SizedBox(height: 4),
+                                                      CustomText(
+                                                        text:
+                                                            '${question.help}',
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: const Color
+                                                            .fromRGBO(
+                                                            53, 49, 45, 1),
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 10),
+                                                      Row(
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          EditQuestionScreen(
+                                                                    topicId:
+                                                                        question
+                                                                            .topicId!,
+                                                                    prompt: question
+                                                                        .prompt!,
+                                                                    help: question
+                                                                        .help!,
+                                                                    questionId:
+                                                                        question
+                                                                            .id!,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                            child: Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 8,
+                                                              ),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                border:
+                                                                    Border.all(
+                                                                  color: const Color
+                                                                      .fromRGBO(
+                                                                      67,
+                                                                      184,
+                                                                      136,
+                                                                      1),
+                                                                ),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            30),
+                                                              ),
+                                                              child: Row(
+                                                                children: [
+                                                                  SvgPicture.asset(
+                                                                      'assets/icons/edit_icon.svg'),
+                                                                  SizedBox(
+                                                                      width: 4),
+                                                                  const CustomText(
+                                                                    text:
+                                                                        'Edit',
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    color: Color
+                                                                        .fromRGBO(
+                                                                            67,
+                                                                            184,
+                                                                            136,
+                                                                            1),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 8),
+                                                          GestureDetector(
+                                                            onTap: () async {
+                                                              final shouldDelete =
+                                                                  await showDialog<
+                                                                      bool>(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) {
+                                                                  return AlertDialog(
+                                                                    title: Text(
+                                                                        "Confirm Delete"),
+                                                                    content: Text(
+                                                                        "Are you sure you want to delete this question?"),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        onPressed: () => Navigator.pop(
+                                                                            context,
+                                                                            false), // Cancel
+                                                                        child: Text(
+                                                                            "Cancel"),
+                                                                      ),
+                                                                      TextButton(
+                                                                        onPressed: () => Navigator.pop(
+                                                                            context,
+                                                                            true), // Confirm
+                                                                        child: Text(
+                                                                            "Delete",
+                                                                            style:
+                                                                                TextStyle(color: Colors.red)),
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+
+                                                              if (shouldDelete ==
+                                                                  true) {
+                                                                final message = await ref
+                                                                    .read(questionsControllerProvider
+                                                                        .notifier)
+                                                                    .deleteQuestion(
+                                                                        context,
+                                                                        question
+                                                                            .id!);
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                  SnackBar(
+                                                                      content: Text(
+                                                                          message)),
+                                                                );
+                                                              }
+                                                            },
+                                                            child: Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 8,
+                                                              ),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        251,
+                                                                        5,
+                                                                        108,
+                                                                        1),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            30),
+                                                              ),
+                                                              child:
+                                                                  const CustomText(
+                                                                text: 'Delete',
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(height: 20),
+                                                CustomButton(
+                                                    buttonTitle: 'Add Answer',
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              AddAnswerScreen(
+                                                            question: question
+                                                                .prompt!,
+                                                            questionId:
+                                                                question.id!,
+                                                            userId: question
+                                                                .userId!,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }),
+                                              ],
+                                            ),
                                           );
                                         },
                                       );

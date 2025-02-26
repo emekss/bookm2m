@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:svg_flutter/svg.dart';
 
+import '../family/inspired_community_screen.dart';
+
 class MainTabview extends StatefulWidget {
   const MainTabview({super.key});
 
@@ -21,7 +23,7 @@ class _MainTabviewState extends State<MainTabview> {
   final List<Widget> screens = [
     const HomeScreen(),
     const QuestionScreen(),
-    const CommunityScreen(),
+    const InspiredCommunityScreen(),
     const PurchaseScreen(),
     const ProfileScreen(),
   ];

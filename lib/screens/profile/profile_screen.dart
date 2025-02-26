@@ -4,6 +4,7 @@ import 'package:book_app_m2m/components/custom_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:svg_flutter/svg.dart';
 
 import '../../api/account/account_controller.dart';
@@ -16,6 +17,16 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  String formatDate(String isoDate) {
+    try {
+      DateTime dateTime = DateTime.parse(isoDate); // Parse the ISO string
+      return DateFormat("MMM d, yyyy")
+          .format(dateTime); // Format to desired format
+    } catch (e) {
+      return "Invalid Date"; // Handle potential errors
+    }
+  }
+
   bool _obscurePasswordText = true;
   bool _isChecked = false;
   bool _isLoading = true;
@@ -118,14 +129,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           SizedBox(height: 20),
                           CustomTextfield(
                             controller: _emailController,
-                            hintText: 'Email',
+                            hintText: 'Email - ${profile.email}',
                             enabled: false, // Email should not be editable
-                          ),
-                          SizedBox(height: 20),
-                          CustomTextfield(
-                            controller: _phoneController,
-                            hintText: 'Phone Number',
-                            // enabled: !_isLoading,
                           ),
                           SizedBox(height: 20),
                           Container(
@@ -184,7 +189,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 color: Color.fromRGBO(41, 42, 44, 1),
                               ),
                               CustomText(
-                                text: 'February 23, 2024',
+                                text: formatDate(profile.lastSeen!),
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
                                 color: Color.fromRGBO(119, 119, 121, 1),

@@ -37,7 +37,7 @@ class BooksRepository {
       throw DioExceptions.fromDioError(e);
     } catch (e) {
       print(e);
-      throw Exception("Failed to upload asset");
+      throw Exception(e);
     }
   }
 
@@ -118,8 +118,7 @@ class BooksRepository {
   /// Delete a question
   Future<String> deleteBooks(String booksId) async {
     try {
-      final response =
-          await dioClient.delete('/api/users/books/$booksId');
+      final response = await dioClient.delete('/api/users/books/$booksId');
       return response.data['message'];
     } on DioException catch (e) {
       throw DioExceptions.fromDioError(e);

@@ -35,6 +35,7 @@ class ChallengeController extends StateNotifier<AsyncValue<List<Challenges>>> {
     required String description,
     required List<String> taggedUsers,
   }) async {
+    final previousState = state; // Store the previous state to restore it later
     state = const AsyncValue.loading();
     try {
       final rowId = await repository.uploadAsset(file);
@@ -54,7 +55,7 @@ class ChallengeController extends StateNotifier<AsyncValue<List<Challenges>>> {
       return message;
     } catch (e, stack) {
       showErrorSnackBar(context, e.toString());
-      state = AsyncValue.error(e, stack);
+      state = previousState;
       return e.toString();
     }
   }
@@ -90,6 +91,7 @@ class ChallengeController extends StateNotifier<AsyncValue<List<Challenges>>> {
     required String coverImageId,
     required bool status,
   }) async {
+    final previousState = state; // Store the previous state to restore it later
     state = const AsyncValue.loading();
     try {
       final message = await repository.updateChallenge(
@@ -102,7 +104,7 @@ class ChallengeController extends StateNotifier<AsyncValue<List<Challenges>>> {
       await fetchChallenges(); // Refresh questions list
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = previousState;
       return e.toString();
     }
   }

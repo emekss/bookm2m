@@ -34,6 +34,7 @@ class TopicController extends StateNotifier<AsyncValue<List<TopicModel>>> {
     required File file,
     required String name,
   }) async {
+    final previousState = state; 
     state = const AsyncValue.loading();
     try {
       final rowId = await repository.uploadAsset(file);
@@ -51,7 +52,7 @@ class TopicController extends StateNotifier<AsyncValue<List<TopicModel>>> {
       return message;
     } catch (e, stack) {
       showErrorSnackBar(context, e.toString());
-      state = AsyncValue.error(e, stack);
+      state = previousState;
       return e.toString();
     }
   }
@@ -63,6 +64,7 @@ class TopicController extends StateNotifier<AsyncValue<List<TopicModel>>> {
     required String coverImageId,
     required String status,
   }) async {
+    final previousState = state;
     state = const AsyncValue.loading();
     try {
       final message = await repository.updateTopic(
@@ -70,21 +72,22 @@ class TopicController extends StateNotifier<AsyncValue<List<TopicModel>>> {
       await fetchTopics(); // Refresh questions list
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = previousState;
       return e.toString();
     }
   }
 
   /// Delete a question and refresh the list
-  Future<String> deleteTopic(String topicId) async {
+  Future<String> deleteTopic(BuildContext context, String topicId) async {
+     final previousState = state;
     state = const AsyncValue.loading();
     try {
       final message = await repository.deleteTopic(topicId);
       await fetchTopics(); // Refresh questions list
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
-
+      state = previousState;
+      showErrorSnackBar(context, e.toString());
       return e.toString();
     }
   }

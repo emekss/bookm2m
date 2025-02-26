@@ -5,7 +5,6 @@ import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:book_app_m2m/components/custom_textfield.dart';
 import 'package:book_app_m2m/screens/books/choose_book_name_screen.dart';
 import 'package:book_app_m2m/services/book_repo.dart';
-import 'package:book_app_m2m/utils/custom_file_picker.dart';
 import 'package:dashed_rect/dashed_rect.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -19,7 +18,6 @@ import '../../api/answer/answer_controller.dart';
 import '../../api/book/book_controller.dart';
 import '../../api/questions/questions_controller.dart';
 import '../../models/answers.dart';
-import '../../models/question.dart';
 import '../../models/questions.dart';
 
 class CreateBookScreen extends ConsumerStatefulWidget {
@@ -214,7 +212,9 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
                             decoration: InputDecoration(
                               enabled: false,
                               border: InputBorder.none,
-                              hintText: 'Questions',
+                              hintText: selectedQuestionsIds.isNotEmpty
+                                  ? '${selectedQuestionsIds.length} question(s) selected'
+                                  : 'Questions',
                               hintStyle: TextStyle(
                                 fontFamily: 'PlusJakartaSans',
                                 fontSize: 15,
@@ -239,7 +239,7 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
                           _showErrorSnackBar(
                               context, answerState.error.toString());
                         } else {
-                          _showAnswerSelection(context);
+                          _showAnsSelection(context);
                         }
                       },
                       child: Padding(
@@ -286,7 +286,9 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
                     ),
                     SizedBox(height: 60),
                     CustomButton(
-                      buttonTitle: 'Next',
+                      buttonTitle: bookState is AsyncLoading
+                          ? 'Creating book...'
+                          : 'Create',
                       onTap: () => submitForm(),
                     )
                   ],
@@ -396,7 +398,7 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
             // Allows modal to update state
             builder: (context, setModalState) {
               return answers.isEmpty
-                  ? const Center(child: Text('No Answers found'))
+                  ? const Center(child: Text('No Questions found'))
                   : Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -435,6 +437,76 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
                             setState(() {
                               selectedAnswersIds =
                                   List.from(tempSelectedAnswerIds);
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Confirm Selection"),
+                        ),
+                      ],
+                    );
+            },
+          );
+        },
+      );
+    }
+  }
+
+  void _showAnsSelection(BuildContext context) {
+    final answerState = ref.read(answerControllerProvider);
+
+    if (answerState is AsyncData) {
+      List<Answers> answers = answerState.value!;
+
+      // Temporary list to store selected users during selection
+      List<String> tempSelectedAnsIds = List.from(selectedAnswersIds);
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true, // Allows full-screen modal
+        builder: (context) {
+          return StatefulBuilder(
+            // Allows modal to update state
+            builder: (context, setModalState) {
+              return answers.isEmpty
+                  ? const Center(child: Text('No Answers found'))
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListView.builder(
+                          itemCount: answers.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            final answer = answers[index];
+                            final isSelected =
+                                tempSelectedAnsIds.contains(answer.id);
+
+                            return ListTile(
+                              title: Text(
+                                answer.prompt ?? "Unknown",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              trailing: isSelected
+                                  ? const Icon(Icons.check_circle,
+                                      color: Colors.green)
+                                  : const Icon(Icons.circle_outlined,
+                                      color: Colors.grey),
+                              onTap: () {
+                                setModalState(() {
+                                  if (isSelected) {
+                                    tempSelectedAnsIds.remove(answer.id);
+                                  } else {
+                                    tempSelectedAnsIds.add(answer.id!);
+                                  }
+                                });
+                              },
+                            );
+                          },
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              selectedAnswersIds =
+                                  List.from(tempSelectedAnsIds);
                             });
                             Navigator.pop(context);
                           },

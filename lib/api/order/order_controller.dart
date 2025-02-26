@@ -35,6 +35,7 @@ class OrdersController extends StateNotifier<AsyncValue<List<Orders>>> {
     required String shippingMethod,
     required String paymentMethod,
   }) async {
+    final previousState = state; // Store the previous state to restore it later
     state = const AsyncValue.loading();
     try {
       final message = await repository.createOrders(
@@ -49,7 +50,7 @@ class OrdersController extends StateNotifier<AsyncValue<List<Orders>>> {
       await fetchOrders(); // Refresh questions list
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = previousState;
       return e.toString();
     }
   }
@@ -66,6 +67,7 @@ class OrdersController extends StateNotifier<AsyncValue<List<Orders>>> {
     required String paymentMethod,
     required String status,
   }) async {
+     final previousState = state;
     state = const AsyncValue.loading();
     try {
       final message = await repository.updateOrders(
@@ -81,20 +83,21 @@ class OrdersController extends StateNotifier<AsyncValue<List<Orders>>> {
       await fetchOrders(); // Refresh questions list
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = previousState;
       return e.toString();
     }
   }
 
   /// Delete a question and refresh the list
   Future<String> deleteOrders(String orderId) async {
+    final previousState = state;
     state = const AsyncValue.loading();
     try {
       final message = await repository.deleteOrders(orderId);
       await fetchOrders(); // Refresh questions list
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = previousState;
 
       return e.toString();
     }

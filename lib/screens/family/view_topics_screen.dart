@@ -308,7 +308,11 @@ class _ViewtopicsScreenState extends ConsumerState<ViewtopicsScreen> {
                                         height: 75,
                                         width: 75,
                                       )
-                                    : Image.network(topic.coverImage!.url!),
+                                    : CircleAvatar(
+                                        radius: 40,
+                                        backgroundImage: NetworkImage(
+                                            topic.coverImage!.url!),
+                                      ),
                                 const SizedBox(height: 6),
                                 CustomText(
                                   text: topic.name.toString(),

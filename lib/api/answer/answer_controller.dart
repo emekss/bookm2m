@@ -32,6 +32,7 @@ class AnswerController extends StateNotifier<AsyncValue<List<Answers>>> {
     required String questionId,
     required String prompt,
   }) async {
+    final previousState = state; // Store the previous state to restore it later
     state = const AsyncValue.loading();
     try {
       final message = await repository.createAnswers(
@@ -41,8 +42,8 @@ class AnswerController extends StateNotifier<AsyncValue<List<Answers>>> {
       Navigator.pop(context);
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
       showErrorSnackBar(context, e.toString());
+      state = previousState;
       return e.toString();
     }
   }
@@ -53,6 +54,7 @@ class AnswerController extends StateNotifier<AsyncValue<List<Answers>>> {
     required String prompt,
     required bool status,
   }) async {
+    final previousState = state; // Store the previous state to restore it later
     state = const AsyncValue.loading();
     try {
       final message = await repository.updateAnswer(
@@ -60,20 +62,21 @@ class AnswerController extends StateNotifier<AsyncValue<List<Answers>>> {
       await fetchAnswers(); // Refresh questions list
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = previousState;
       return e.toString();
     }
   }
 
   /// Delete a question and refresh the list
   Future<String> deleteAnswer(String answerId) async {
+    final previousState = state; // Store the previous state to restore it later
     state = const AsyncValue.loading();
     try {
       final message = await repository.deleteAnswer(answerId);
       await fetchAnswers(); // Refresh questions list
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = previousState;
 
       return e.toString();
     }

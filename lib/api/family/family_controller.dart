@@ -35,6 +35,7 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
     required String birthDate,
     required String relationId,
   }) async {
+    final previousState = state; // Store the previous state to restore it later
     state = const AsyncValue.loading();
     try {
       final message = await repository.createFamily(
@@ -48,8 +49,8 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
       Navigator.pop(context);
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
       showErrorSnackBar(context, e.toString());
+      state = previousState;
       return e.toString();
     }
   }
@@ -60,6 +61,7 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
     required String relationId,
     required bool status,
   }) async {
+    final previousState = state; // Store the previous state to restore it later
     state = const AsyncValue.loading();
     try {
       final message = await repository.updateFamily(
@@ -67,21 +69,22 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
       await fetchFamily(); // Refresh questions list
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = previousState;
       return e.toString();
     }
   }
 
   /// Delete a question and refresh the list
-  Future<String> deleteFamily(String familyId) async {
+  Future<String> deleteFamily(BuildContext context,String familyId) async {
+    final previousState = state;
     state = const AsyncValue.loading();
     try {
       final message = await repository.deleteFamily(familyId);
       await fetchFamily(); // Refresh questions list
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
-
+      state = previousState;
+      showErrorSnackBar(context, "❌ ${e.toString()}"); 
       return e.toString();
     }
   }
@@ -92,9 +95,11 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
       state = AsyncValue.data(_allFamily);
     } else {
       final filteredQuestions = _allFamily
-          .where((q) => q.relative!.firstName!
-              .toLowerCase()
-              .contains(query.toLowerCase()))
+          .where((q) =>
+              q.relative!.firstName!
+                  .toLowerCase()
+                  .contains(query.toLowerCase()) ||
+              q.relative!.lastName!.toLowerCase().contains(query.toLowerCase()))
           .toList();
       state = AsyncValue.data(filteredQuestions);
     }

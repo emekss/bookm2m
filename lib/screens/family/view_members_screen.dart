@@ -274,37 +274,37 @@ class _ViewMembersScreenState extends ConsumerState<ViewMembersScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  // family.relative != null &&
-                                  //         family.relative!.profileImage !=
-                                  //             null &&
-                                  //         family.relative!.profileImage!.url!
-                                  //             .endsWith('.svg')
-                                  //     ? Container(
-                                  //         height: 100,
-                                  //         width: 100,
-                                  //         decoration: const BoxDecoration(
-                                  //           shape: BoxShape.circle,
-                                  //           color: Color.fromRGBO(
-                                  //               248, 249, 250, 1),
-                                  //         ),
-                                  //         child: Padding(
-                                  //           padding: const EdgeInsets.all(14.0),
-                                  //           child: SvgPicture.asset(family
-                                  //               .relative!.profileImage!.url!),
-                                  //         ),
-                                  //       )
-                                  //     : SizedBox(
-                                  //         height: 100,
-                                  //         width: 100,
-                                  //         child: Image.asset(
-                                  //           family.relative!.profileImage!.url!,
-                                  //           fit: BoxFit.cover,
-                                  //         ),
-                                  //       ),
+                                  family.relative != null &&
+                                          family.relative!.profileImage != null
+                                      ? Container(
+                                          height: 100,
+                                          width: 100,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Color.fromRGBO(
+                                                248, 249, 250, 1),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(14.0),
+                                            child: SvgPicture.asset(family
+                                                .relative!.profileImage!.url!),
+                                          ),
+                                        )
+                                      : Container(
+                                          height: 100,
+                                          width: 100,
+                                          decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10)),
+                                              image: DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/images/family.png'),
+                                                  fit: BoxFit.cover)),
+                                        ),
                                   const SizedBox(height: 4),
                                   CustomText(
                                     text:
-                                        "${family.relative!.firstName} ${family.relative!.lastName}",
+                                        "${family.relative!.fullName} ${family.relative!.lastName}",
                                     color: const Color.fromRGBO(53, 49, 45, 1),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
@@ -354,22 +354,65 @@ class _ViewMembersScreenState extends ConsumerState<ViewMembersScreen> {
                                         ),
                                       ),
                                       const SizedBox(width: 6),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromRGBO(
-                                              251, 5, 108, 1),
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                        ),
-                                        child: const CustomText(
-                                          text: 'Remove',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.white,
+                                      GestureDetector(
+                                        onTap: () async {
+                                          final shouldDelete =
+                                              await showDialog<bool>(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: Text("Confirm Delete"),
+                                                content: Text(
+                                                    "Are you sure you want to delete this member?"),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(context,
+                                                            false), // Cancel
+                                                    child: Text("Cancel"),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(context,
+                                                            true), // Confirm
+                                                    child: Text("Delete",
+                                                        style: TextStyle(
+                                                            color: Colors.red)),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+
+                                          if (shouldDelete == true) {
+                                            final message = await ref
+                                                .read(familyControllerProvider
+                                                    .notifier)
+                                                .deleteFamily(context,
+                                                    family.relation!.id!);
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(content: Text(message)),
+                                            );
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromRGBO(
+                                                251, 5, 108, 1),
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                          ),
+                                          child: const CustomText(
+                                            text: 'Remove',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ],

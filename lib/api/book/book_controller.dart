@@ -38,7 +38,9 @@ class BooksController extends StateNotifier<AsyncValue<List<Books>>> {
     required List<String> questions,
     required List<String> answers,
   }) async {
+    final previousState = state; // Store the previous state to restore it later
     state = const AsyncValue.loading();
+
     try {
       final rowId = await repository.uploadAsset(coverImage);
       showSuccessSnackBar(context, "✅ File uploaded successfully");
@@ -53,11 +55,17 @@ class BooksController extends StateNotifier<AsyncValue<List<Books>>> {
           answers: answers);
       showSuccessSnackBar(context, message);
       print("✅ Book created successfully: $message");
+
       Navigator.pop(context);
       await fetchBooks();
+
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      showErrorSnackBar(context, "❌ ${e.toString()}"); // Show error in SnackBar
+      print("❌ Error creating book: $e");
+
+      // Restore the previous state instead of setting it to an error state
+      state = previousState;
       return e.toString();
     }
   }

@@ -36,6 +36,7 @@ class AssetController extends StateNotifier<AsyncValue<List<Assets>>> {
     required String type,
     required List<String> taggedUsers,
   }) async {
+    final previousState = state; // Store the previous state to restore it later
     state = const AsyncValue.loading();
     try {
       final msg =
@@ -48,7 +49,7 @@ class AssetController extends StateNotifier<AsyncValue<List<Assets>>> {
       return msg;
     } catch (e, stack) {
       showErrorSnackBar(context, e.toString());
-      state = AsyncValue.error(e, stack);
+     state = previousState;
       return e.toString();
     }
   }
