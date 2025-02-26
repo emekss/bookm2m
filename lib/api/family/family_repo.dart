@@ -67,7 +67,7 @@ class FamilyRepository {
     } on DioException catch (e) {
       throw DioExceptions.fromDioError(e);
     } catch (e) {
-      throw Exception("Failed to update family");
+      throw Exception(e);
     }
   }
 
@@ -79,7 +79,7 @@ class FamilyRepository {
     } on DioException catch (e) {
       throw DioExceptions.fromDioError(e);
     } catch (e) {
-      throw Exception("Failed to delete order");
+      throw Exception(e);
     }
   }
 }

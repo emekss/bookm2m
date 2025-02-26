@@ -18,7 +18,7 @@ class RelationshipRepository {
       throw DioExceptions.fromDioError(e);
     } catch (e) {
       print(e);
-      throw Exception("Failed to load relationships");
+      throw Exception(e);
     }
   }
 }

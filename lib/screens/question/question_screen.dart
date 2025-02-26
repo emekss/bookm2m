@@ -432,20 +432,21 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
 
                                                               if (shouldDelete ==
                                                                   true) {
+                                                                final messenger =
+                                                                    ScaffoldMessenger.of(
+                                                                        context); // Store before pop
                                                                 final message = await ref
                                                                     .read(questionsControllerProvider
                                                                         .notifier)
                                                                     .deleteQuestion(
-                                                                        context,
+                                                                       
                                                                         question
                                                                             .id!);
-                                                                ScaffoldMessenger.of(
-                                                                        context)
-                                                                    .showSnackBar(
-                                                                  SnackBar(
-                                                                      content: Text(
-                                                                          message)),
-                                                                );
+
+                                                                messenger.showSnackBar(
+                                                                    SnackBar(
+                                                                        content:
+                                                                            Text(message)));
                                                               }
                                                             },
                                                             child: Container(

@@ -9,6 +9,9 @@ import 'package:book_app_m2m/screens/question/question_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:svg_flutter/svg.dart';
 
+import '../assets/upload_assets_screen.dart';
+import '../family/add_family_screen.dart';
+
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -142,57 +145,77 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Container(
-                      height: 185,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Color.fromRGBO(248, 249, 250, 1),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset('assets/icons/add_icon.svg'),
-                          SizedBox(height: 15),
-                          CustomText(
-                            textAlign: TextAlign.center,
-                            text: 'Add Family \nMembers',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
-                            color: Color.fromRGBO(53, 49, 45, 1),
-                          )
-                        ],
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddFamilyScreen(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        height: 185,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Color.fromRGBO(248, 249, 250, 1),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset('assets/icons/add_icon.svg'),
+                            SizedBox(height: 15),
+                            CustomText(
+                              textAlign: TextAlign.center,
+                              text: 'Add Family \nMembers',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              color: Color.fromRGBO(53, 49, 45, 1),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(width: 20),
                   Expanded(
-                    child: Container(
-                      height: 185,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Color.fromRGBO(248, 249, 250, 1),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset('assets/icons/add_icon.svg'),
-                          SizedBox(height: 15),
-                          CustomText(
-                            textAlign: TextAlign.center,
-                            text: 'Upload and Tag \nAssets',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
-                            color: Color.fromRGBO(53, 49, 45, 1),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UploadAssetsScreen(),
                           ),
-                          SizedBox(height: 8),
-                          CustomText(
-                            text: '(Files/Images)',
-                            textAlign: TextAlign.center,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: Color.fromRGBO(119, 119, 121, 1),
-                          ),
-                        ],
+                        );
+                      },
+                      child: Container(
+                        height: 185,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Color.fromRGBO(248, 249, 250, 1),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset('assets/icons/add_icon.svg'),
+                            SizedBox(height: 15),
+                            CustomText(
+                              textAlign: TextAlign.center,
+                              text: 'Upload and Tag \nAssets',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              color: Color.fromRGBO(53, 49, 45, 1),
+                            ),
+                            SizedBox(height: 8),
+                            CustomText(
+                              text: '(Files/Images)',
+                              textAlign: TextAlign.center,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                              color: Color.fromRGBO(119, 119, 121, 1),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

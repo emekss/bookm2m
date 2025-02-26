@@ -14,6 +14,7 @@ import 'package:svg_flutter/svg.dart';
 
 import '../../api/family/family_controller.dart';
 import 'add_family_screen.dart';
+import 'edit_family_screen.dart';
 
 class ViewMembersScreen extends ConsumerStatefulWidget {
   const ViewMembersScreen({super.key});
@@ -321,36 +322,47 @@ class _ViewMembersScreenState extends ConsumerState<ViewMembersScreen> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: const Color.fromRGBO(
-                                                67, 184, 136, 1),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  EditFamilyScreen(familyId: family.relation!.id!,),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 4,
                                           ),
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                        ),
-                                        child: Row(
-                                          children: const [
-                                            Icon(
-                                              Icons.edit_outlined,
-                                              color: Color.fromRGBO(
-                                                  67, 184, 136, 1),
-                                              size: 15,
-                                            ),
-                                            SizedBox(width: 4),
-                                            CustomText(
-                                              text: 'Edit',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                              color: Color.fromRGBO(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: const Color.fromRGBO(
                                                   67, 184, 136, 1),
                                             ),
-                                          ],
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                          ),
+                                          child: Row(
+                                            children: const [
+                                              Icon(
+                                                Icons.edit_outlined,
+                                                color: Color.fromRGBO(
+                                                    67, 184, 136, 1),
+                                                size: 15,
+                                              ),
+                                              SizedBox(width: 4),
+                                              CustomText(
+                                                text: 'Edit',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                                color: Color.fromRGBO(
+                                                    67, 184, 136, 1),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(width: 6),
@@ -361,9 +373,9 @@ class _ViewMembersScreenState extends ConsumerState<ViewMembersScreen> {
                                             context: context,
                                             builder: (context) {
                                               return AlertDialog(
-                                                title: Text("Confirm Delete"),
+                                                title: Text("Confirm Remove"),
                                                 content: Text(
-                                                    "Are you sure you want to delete this member?"),
+                                                    "Are you sure you want to remove this member?"),
                                                 actions: [
                                                   TextButton(
                                                     onPressed: () =>
@@ -375,7 +387,7 @@ class _ViewMembersScreenState extends ConsumerState<ViewMembersScreen> {
                                                     onPressed: () =>
                                                         Navigator.pop(context,
                                                             true), // Confirm
-                                                    child: Text("Delete",
+                                                    child: Text("Remove",
                                                         style: TextStyle(
                                                             color: Colors.red)),
                                                   ),

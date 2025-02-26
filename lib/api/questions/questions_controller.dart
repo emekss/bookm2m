@@ -33,7 +33,7 @@ class QuestionsController extends StateNotifier<AsyncValue<List<Questions>>> {
       required String help,
       required String topicId,
       required BuildContext context}) async {
-         final previousState = state; 
+    final previousState = state;
     state = const AsyncValue.loading();
     try {
       final message = await repository.createQuestion(
@@ -82,16 +82,17 @@ class QuestionsController extends StateNotifier<AsyncValue<List<Questions>>> {
   }
 
   /// Delete a question and refresh the list
-  Future<String> deleteQuestion(BuildContext context, String questionId) async {
+  Future<String> deleteQuestion(String questionId) async {
     final previousState = state;
     state = const AsyncValue.loading();
     try {
       final message = await repository.deleteQuestion(questionId);
-      await fetchQuestions(); 
-       showSuccessSnackBar(context, message);
+      await fetchQuestions();
+      // showSuccessSnackBar(context, message);
       return message;
     } catch (e, stack) {
-       showErrorSnackBar(context, e.toString());
+      print(e);
+      // showErrorSnackBar(context, e.toString());
       state = previousState;
 
       return e.toString();
