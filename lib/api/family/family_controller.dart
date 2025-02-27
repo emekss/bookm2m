@@ -57,6 +57,7 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
 
   /// Update an existing question and refresh the list
   Future<String> updateFamily({
+    // required BuildContext context,
     required String familyId,
     required String relationId,
     required bool status,
@@ -67,15 +68,17 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
       final message = await repository.updateFamily(
           familyId: familyId, relationId: relationId, status: status);
       await fetchFamily(); // Refresh questions list
+      // showSuccessSnackBar(context, message);
       return message;
     } catch (e, stack) {
       state = previousState;
+      // showErrorSnackBar(context, e.toString());
       return e.toString();
     }
   }
 
   /// Delete a question and refresh the list
-  Future<String> deleteFamily(BuildContext context,String familyId) async {
+  Future<String> deleteFamily(String familyId) async {
     final previousState = state;
     state = const AsyncValue.loading();
     try {
@@ -84,7 +87,6 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
       return message;
     } catch (e, stack) {
       state = previousState;
-      showErrorSnackBar(context, "❌ ${e.toString()}"); 
       return e.toString();
     }
   }
@@ -96,10 +98,8 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
     } else {
       final filteredQuestions = _allFamily
           .where((q) =>
-              q.relative!.firstName!
-                  .toLowerCase()
-                  .contains(query.toLowerCase()) ||
-              q.relative!.lastName!.toLowerCase().contains(query.toLowerCase()))
+              q.fullName!.toLowerCase().contains(query.toLowerCase()) ||
+              q.fullName!.toLowerCase().contains(query.toLowerCase()))
           .toList();
       state = AsyncValue.data(filteredQuestions);
     }

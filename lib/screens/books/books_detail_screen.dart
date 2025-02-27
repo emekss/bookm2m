@@ -10,8 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:svg_flutter/svg.dart';
 
+import '../../models/books.dart';
+
 class BooksDetailScreen extends StatefulWidget {
-  const BooksDetailScreen({super.key});
+  const BooksDetailScreen({super.key, required this.books});
+
+  final Books books;
 
   @override
   State<BooksDetailScreen> createState() => _BooksDetailScreenState();
@@ -22,6 +26,7 @@ class _BooksDetailScreenState extends State<BooksDetailScreen> {
   bool isDropdownOpen = false;
   @override
   Widget build(BuildContext context) {
+    final book = widget.books;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -152,9 +157,11 @@ class _BooksDetailScreenState extends State<BooksDetailScreen> {
                   Container(
                     height: 272,
                     width: double.infinity,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/images/book2.png'),
+                        image: book.coverImage != null
+                            ? NetworkImage(book.coverImage!.url!)
+                            : AssetImage('assets/images/book2.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -170,7 +177,9 @@ class _BooksDetailScreenState extends State<BooksDetailScreen> {
                         child: SizedBox(
                             height: 210,
                             width: 168,
-                            child: Image.asset('assets/images/book2.png'))),
+                            child: book.coverImage != null
+                                ? Image.network(book.coverImage!.url!)
+                                : Image.asset('assets/images/book2.png'))),
                   ),
                   Positioned(
                     top: 230,
@@ -190,16 +199,16 @@ class _BooksDetailScreenState extends State<BooksDetailScreen> {
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             CustomText(
-                              text: 'Book Title',
+                              text: book.title ?? 'Book Title',
                               fontSize: 19,
                               fontWeight: FontWeight.w500,
                               color: Color.fromRGBO(53, 49, 45, 1),
                             ),
                             SizedBox(height: 4),
                             CustomText(
-                              text: 'Tabish bin Tahir',
+                              text: book.dedication ?? 'Tabish bin Tahir',
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                               color: Color.fromRGBO(119, 119, 121, 1),
@@ -280,7 +289,9 @@ class _BooksDetailScreenState extends State<BooksDetailScreen> {
                                   fontWeight: FontWeight.w400,
                                 ),
                                 CustomText(
-                                  text: '20',
+                                  text: book.questions != null
+                                      ? book.questions!.length.toString()
+                                      : '20',
                                   color: Color.fromRGBO(53, 49, 45, 1),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -306,7 +317,12 @@ class _BooksDetailScreenState extends State<BooksDetailScreen> {
                                   fontWeight: FontWeight.w400,
                                 ),
                                 CustomText(
-                                  text: '17',
+                                  text:
+                                      // book.questions != null
+                                      //     ? book.questions!
+                                      //         .contains('answers') ? ''
+                                      //     :
+                                      '17',
                                   color: Color.fromRGBO(53, 49, 45, 1),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -332,7 +348,7 @@ class _BooksDetailScreenState extends State<BooksDetailScreen> {
                                   fontWeight: FontWeight.w400,
                                 ),
                                 CustomText(
-                                  text: '3',
+                                  text: '0',
                                   color: Color.fromRGBO(53, 49, 45, 1),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -390,8 +406,8 @@ class _BooksDetailScreenState extends State<BooksDetailScreen> {
                           color: Color.fromRGBO(53, 49, 45, 1),
                         ),
                         const SizedBox(height: 10),
-                        const CustomText(
-                          text:
+                        CustomText(
+                          text: book.description ??
                               'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem psum has been the industry\'s standard dummy text ever since the 1500s,',
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -408,25 +424,39 @@ class _BooksDetailScreenState extends State<BooksDetailScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Question Cards
-                        _buildQuestionCard(
-                          'Question 1 | Topic',
-                          'How would you describe our family\'s humour as if to a stranger?',
-                          isHighlighted: true,
-                        ),
+                        ListView.builder(
+                            itemCount: book.questions!.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              final question = book.questions![index];
+                              return _buildQuestionCard(
+                                'Question 1 | Topic',
+                                question.prompt!,
+                                question.answers!.length.toString(),
+                                book.dedication ?? '',
+                                isHighlighted: true,
+                              );
+                            }),
 
-                        const SizedBox(height: 16),
-                        _buildQuestionCard(
-                          'Question 1 | Topic',
-                          'How would you describe our family\'s humour as if to a stranger?',
-                          isHighlighted: true,
-                        ),
-                        const SizedBox(height: 16),
-                        _buildQuestionCard(
-                          'Question 1 | Topic',
-                          'How would you describe our family\'s humour as if to a stranger?',
-                          isHighlighted: true,
-                        ),
+                        // Question Cards
+                        // _buildQuestionCard(
+                        //   'Question 1 | Topic',
+                        //   'How would you describe our family\'s humour as if to a stranger?',
+                        //   isHighlighted: true,
+                        // ),
+
+                        // const SizedBox(height: 16),
+                        // _buildQuestionCard(
+                        //   'Question 1 | Topic',
+                        //   'How would you describe our family\'s humour as if to a stranger?',
+                        //   isHighlighted: true,
+                        // ),
+                        // const SizedBox(height: 16),
+                        // _buildQuestionCard(
+                        //   'Question 1 | Topic',
+                        //   'How would you describe our family\'s humour as if to a stranger?',
+                        //   isHighlighted: true,
+                        // ),
                       ],
                     ),
                   ),
@@ -440,7 +470,8 @@ class _BooksDetailScreenState extends State<BooksDetailScreen> {
     );
   }
 
-  Widget _buildQuestionCard(String topic, String question,
+  Widget _buildQuestionCard(
+      String topic, String question, String answers, String author,
       {bool isHighlighted = false}) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -464,7 +495,7 @@ class _BooksDetailScreenState extends State<BooksDetailScreen> {
                   child: Image.asset('assets/images/user.png')),
               SizedBox(width: 10),
               CustomText(
-                text: 'Tabish Bin Tahir',
+                text: author ?? 'Tabish Bin Tahir',
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: const Color.fromRGBO(41, 42, 44, 1),
@@ -497,7 +528,7 @@ class _BooksDetailScreenState extends State<BooksDetailScreen> {
                 ),
                 child: Center(
                   child: CustomText(
-                    text: 'Answer (23)',
+                    text: 'Answer ($answers)',
                     fontSize: 14,
                     color: Colors.white,
                     fontWeight: FontWeight.w400,

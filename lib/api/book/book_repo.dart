@@ -50,7 +50,7 @@ class BooksRepository {
       throw DioExceptions.fromDioError(e);
     } catch (e) {
       print(e);
-      throw Exception("Failed to load books");
+      throw Exception(e);
     }
   }
 

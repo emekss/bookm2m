@@ -4,13 +4,14 @@ import 'package:svg_flutter/svg_flutter.dart';
 
 class QuestionCard extends StatefulWidget {
   final String topic;
-  final String question;
+  final String question, answerLength;
   final bool isHighlighted;
 
   const QuestionCard({
     super.key,
     required this.topic,
     required this.question,
+    required this.answerLength,
     this.isHighlighted = false,
   });
 
@@ -69,32 +70,32 @@ class _QuestionCardState extends State<QuestionCard> {
                 fontWeight: FontWeight.w400,
                 color: const Color.fromRGBO(119, 119, 121, 1),
               ),
-              SizedBox(
-                width: 21,
-                height: 21,
-                child: Checkbox(
-                  value:
-                      _isCheckedMain, // Use the state variable instead of hardcoded true
-                  onChanged: _handleCheckboxChangeMain,
-                  activeColor: const Color.fromRGBO(67, 184, 136, 1),
-                  side: WidgetStateBorderSide.resolveWith(
-                    (states) => BorderSide(
-                      width: 1.0,
-                      color: states.contains(WidgetState.selected)
-                          ? const Color.fromRGBO(67, 184, 136, 1)
-                          : const Color.fromRGBO(67, 184, 136, 1),
-                    ),
-                  ),
-                  fillColor: WidgetStateProperty.resolveWith<Color>(
-                    (Set<WidgetState> states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return const Color.fromRGBO(67, 184, 136, 1);
-                      }
-                      return const Color.fromRGBO(242, 242, 244, 1);
-                    },
-                  ),
-                ),
-              ),
+              // SizedBox(
+              //   width: 21,
+              //   height: 21,
+              //   child: Checkbox(
+              //     value:
+              //         _isCheckedMain, // Use the state variable instead of hardcoded true
+              //     onChanged: _handleCheckboxChangeMain,
+              //     activeColor: const Color.fromRGBO(67, 184, 136, 1),
+              //     side: WidgetStateBorderSide.resolveWith(
+              //       (states) => BorderSide(
+              //         width: 1.0,
+              //         color: states.contains(WidgetState.selected)
+              //             ? const Color.fromRGBO(67, 184, 136, 1)
+              //             : const Color.fromRGBO(67, 184, 136, 1),
+              //       ),
+              //     ),
+              //     fillColor: WidgetStateProperty.resolveWith<Color>(
+              //       (Set<WidgetState> states) {
+              //         if (states.contains(WidgetState.selected)) {
+              //           return const Color.fromRGBO(67, 184, 136, 1);
+              //         }
+              //         return const Color.fromRGBO(242, 242, 244, 1);
+              //       },
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           const SizedBox(height: 4),
@@ -115,7 +116,7 @@ class _QuestionCardState extends State<QuestionCard> {
                 ),
                 child: Center(
                   child: CustomText(
-                    text: 'Answer (23)',
+                    text: 'Answer (${widget.answerLength})',
                     fontSize: 14,
                     color: Colors.white,
                     fontWeight: FontWeight.w400,

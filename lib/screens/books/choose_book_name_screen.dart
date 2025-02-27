@@ -175,6 +175,7 @@ class _ChooseBookNameScreenState extends State<ChooseBookNameScreen> {
                           question:
                               'How would you describe our family\'s humour as if to a stranger?',
                           isHighlighted: true,
+                          answerLength: '1',
                         ),
                         const SizedBox(height: 16),
                         Container(
@@ -259,12 +260,14 @@ class _ChooseBookNameScreenState extends State<ChooseBookNameScreen> {
                           topic: 'Question 1 | Topic',
                           question:
                               'How would you describe our family\'s humour as if to a stranger?',
+                          answerLength: '2',
                         ),
                         const SizedBox(height: 16),
                         QuestionCard(
                           topic: 'Question 1 | Topic',
                           question:
                               'How would you describe our family\'s humour as if to a stranger?',
+                          answerLength: '1',
                         ),
                       ],
                     ),

@@ -231,8 +231,9 @@ class _ViewBooksScreenState extends ConsumerState<ViewBooksScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            const BooksDetailScreen(),
+                                        builder: (context) => BooksDetailScreen(
+                                          books: book,
+                                        ),
                                       ),
                                     );
                                   },
@@ -252,7 +253,7 @@ class _ViewBooksScreenState extends ConsumerState<ViewBooksScreen> {
                                               child: ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(8),
-                                                child: Image.asset(
+                                                child: Image.network(
                                                   book.coverImage!.url!,
                                                   fit: BoxFit.cover,
                                                 ),

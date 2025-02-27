@@ -41,6 +41,7 @@ class _EditFamilyScreenState extends ConsumerState<EditFamilyScreen> {
   @override
   Widget build(BuildContext context) {
     final relState = ref.watch(relationshipControllerProvider);
+    final famState = ref.watch(familyControllerProvider);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -250,18 +251,19 @@ class _EditFamilyScreenState extends ConsumerState<EditFamilyScreen> {
               ),
               SizedBox(height: 10),
               CustomButton(
-                buttonTitle: relState is AsyncLoading ? 'Editing...' : 'Edit',
+                buttonTitle: famState is AsyncLoading ? 'Editing...' : 'Edit',
                 onTap: () {
-                  if (prompt.text.isEmpty) {
-                    _showErrorSnackBar(context, 'enter a prompt');
-                  } else if (help.text.isEmpty) {
-                    _showErrorSnackBar(context, 'enter help');
-                  } else if (selectedTopic == null) {
+                  if (selectedTopic == null) {
                     _showErrorSnackBar(
                         context, 'select a question from the dropdown');
                   } else {
                     ref
-                        .read(familyControllerProvider.notifier).updateFamily(familyId: widget.familyId, relationId: selectedTopicId!, status: selectedStatus);
+                        .read(familyControllerProvider.notifier)
+                        .updateFamily(
+                            familyId: widget.familyId,
+                            relationId: selectedTopicId!,
+                            status: selectedStatus)
+                        .then((onValue) => print(onValue));
                   }
                   // Navigator.push(
                   //   context,

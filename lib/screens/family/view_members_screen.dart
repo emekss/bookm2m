@@ -275,8 +275,7 @@ class _ViewMembersScreenState extends ConsumerState<ViewMembersScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  family.relative != null &&
-                                          family.relative!.profileImage != null
+                                  family.profileImage != null
                                       ? Container(
                                           height: 100,
                                           width: 100,
@@ -287,8 +286,8 @@ class _ViewMembersScreenState extends ConsumerState<ViewMembersScreen> {
                                           ),
                                           child: Padding(
                                             padding: const EdgeInsets.all(14.0),
-                                            child: SvgPicture.asset(family
-                                                .relative!.profileImage!.url!),
+                                            child: Image.network(
+                                                family.profileImage!),
                                           ),
                                         )
                                       : Container(
@@ -304,8 +303,7 @@ class _ViewMembersScreenState extends ConsumerState<ViewMembersScreen> {
                                         ),
                                   const SizedBox(height: 4),
                                   CustomText(
-                                    text:
-                                        "${family.relative!.fullName} ${family.relative!.lastName}",
+                                    text: "${family.fullName}",
                                     color: const Color.fromRGBO(53, 49, 45, 1),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
@@ -328,7 +326,9 @@ class _ViewMembersScreenState extends ConsumerState<ViewMembersScreen> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  EditFamilyScreen(familyId: family.relation!.id!,),
+                                                  EditFamilyScreen(
+                                                familyId: family.relation!.id!,
+                                              ),
                                             ),
                                           );
                                         },
@@ -397,13 +397,13 @@ class _ViewMembersScreenState extends ConsumerState<ViewMembersScreen> {
                                           );
 
                                           if (shouldDelete == true) {
+                                            final messenger =
+                                                ScaffoldMessenger.of(context);
                                             final message = await ref
                                                 .read(familyControllerProvider
                                                     .notifier)
-                                                .deleteFamily(context,
-                                                    family.relation!.id!);
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
+                                                .deleteFamily(family.familyId!);
+                                            messenger.showSnackBar(
                                               SnackBar(content: Text(message)),
                                             );
                                           }

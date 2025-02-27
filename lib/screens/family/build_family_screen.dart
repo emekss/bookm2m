@@ -323,19 +323,16 @@ class _BuildFamilyScreenState extends ConsumerState<BuildFamilyScreen> {
                                                           height: 22,
                                                           width: 22,
                                                           child: family
-                                                                      .relative!
                                                                       .profileImage !=
                                                                   null
                                                               ? Image.network(family
-                                                                  .relative!
-                                                                  .profileImage!
-                                                                  .fileExtension!)
+                                                                  .profileImage!)
                                                               : Image.asset(
                                                                   'assets/images/user.png')),
                                                       SizedBox(width: 8),
                                                       CustomText(
                                                         text:
-                                                            '${family.relative!.fullName!} ${family.relative!.lastName!}',
+                                                            '${family.fullName!}',
                                                         color: Color.fromRGBO(
                                                             14, 13, 30, 1),
                                                         fontWeight:

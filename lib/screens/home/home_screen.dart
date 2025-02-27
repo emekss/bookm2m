@@ -11,17 +11,22 @@ import 'package:book_app_m2m/screens/home/widgets/category_box.dart';
 import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
-class HomeScreen extends StatefulWidget {
+import '../../api/questions/questions_controller.dart';
+import '../../api/topic/topic_controller.dart';
+
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   // Your existing categories and questions lists remain the same
   final List<Map<String, String>> questions = [
     {
@@ -159,6 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
+    final topicState = ref.watch(topicControllerProvider);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -373,61 +379,379 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
-                      GridView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 1,
-                          mainAxisSpacing: 1,
-                          childAspectRatio: 2,
-                        ),
-                        itemCount: questions.length,
-                        itemBuilder: (context, index) {
-                          final question = questions[index];
-                          return Row(
-                            children: [
-                              SizedBox(
-                                height: 48,
-                                width: 48,
-                                child: question['image']!.endsWith('.svg')
-                                    ? SvgPicture.asset(question['image']!)
-                                    : Image.asset(
-                                        question['image']!,
-                                        width: 40,
-                                        height: 40,
-                                      ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CustomText(
-                                      text: question['title']!,
-                                      color:
-                                          const Color.fromRGBO(53, 49, 45, 1),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
+                      topicState.when(
+                          data: (data) {
+                            return data.isEmpty
+                                ? Text('No Questions')
+                                : GridView.builder(
+                                    padding: EdgeInsets.zero,
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: 1,
+                                      mainAxisSpacing: 1,
+                                      childAspectRatio: 2,
                                     ),
-                                    const SizedBox(height: 4),
-                                    CustomText(
-                                      text: question['author']!,
-                                      color: const Color.fromRGBO(
-                                          119, 119, 121, 1),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
+                                    itemCount: data.length,
+                                    itemBuilder: (context, index) {
+                                      final question = data[index];
+                                      return Row(
+                                        children: [
+                                          SizedBox(
+                                            height: 48,
+                                            width: 48,
+                                            child: question.coverImage !=
+                                                        null &&
+                                                    question.coverImage!.url !=
+                                                        null
+                                                ? Image.network(
+                                                    question.coverImage!.url!)
+                                                : Image.asset(
+                                                    'assets/images/homeimage1.png',
+                                                    width: 40,
+                                                    height: 40,
+                                                  ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                CustomText(
+                                                  text: question.name!,
+                                                  color: const Color.fromRGBO(
+                                                      53, 49, 45, 1),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                                const SizedBox(height: 4),
+                                                CustomText(
+                                                  text: question
+                                                      .count!.questions
+                                                      .toString(),
+                                                  color: const Color.fromRGBO(
+                                                      119, 119, 121, 1),
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                            // ListView.builder(
+                            //     itemCount: data.length,
+                            //     shrinkWrap: true,
+                            //     physics:
+                            //         const NeverScrollableScrollPhysics(),
+                            //     itemBuilder: (context, index) {
+                            //       final question = data[index];
+                            //       return Padding(
+                            //         padding: const EdgeInsets.symmetric(
+                            //             vertical: 8.0),
+                            //         child: Column(
+                            //           children: [
+                            //             Container(
+                            //               padding:
+                            //                   const EdgeInsets.all(20),
+                            //               decoration: BoxDecoration(
+                            //                 color: Colors.white,
+                            //                 border: Border.all(
+                            //                     color: const Color
+                            //                         .fromRGBO(
+                            //                         67, 184, 136, 1)),
+                            //                 borderRadius:
+                            //                     BorderRadius.circular(
+                            //                         8),
+                            //               ),
+                            //               child: Column(
+                            //                 crossAxisAlignment:
+                            //                     CrossAxisAlignment
+                            //                         .start,
+                            //                 children: [
+                            //                   CustomText(
+                            //                     fontStyle:
+                            //                         FontStyle.italic,
+                            //                     text:
+                            //                         'Question ${index + 1} / Topic',
+                            //                     fontSize: 12,
+                            //                     fontWeight:
+                            //                         FontWeight.w400,
+                            //                     color: const Color
+                            //                         .fromRGBO(
+                            //                         119, 119, 121, 1),
+                            //                   ),
+                            //                   const SizedBox(height: 4),
+                            //                   CustomText(
+                            //                     text:
+                            //                         '${question.help}',
+                            //                     fontSize: 15,
+                            //                     fontWeight:
+                            //                         FontWeight.w400,
+                            //                     color: const Color
+                            //                         .fromRGBO(
+                            //                         53, 49, 45, 1),
+                            //                   ),
+                            //                   const SizedBox(
+                            //                       height: 10),
+                            //                   Row(
+                            //                     children: [
+                            //                       GestureDetector(
+                            //                         onTap: () {
+                            //                           Navigator.push(
+                            //                             context,
+                            //                             MaterialPageRoute(
+                            //                               builder:
+                            //                                   (context) =>
+                            //                                       EditQuestionScreen(
+                            //                                 topicId:
+                            //                                     question
+                            //                                         .topicId!,
+                            //                                 prompt: question
+                            //                                     .prompt!,
+                            //                                 help: question
+                            //                                     .help!,
+                            //                                 questionId:
+                            //                                     question
+                            //                                         .id!,
+                            //                               ),
+                            //                             ),
+                            //                           );
+                            //                         },
+                            //                         child: Container(
+                            //                           padding:
+                            //                               const EdgeInsets
+                            //                                   .symmetric(
+                            //                             horizontal: 16,
+                            //                             vertical: 8,
+                            //                           ),
+                            //                           decoration:
+                            //                               BoxDecoration(
+                            //                             border:
+                            //                                 Border.all(
+                            //                               color: const Color
+                            //                                   .fromRGBO(
+                            //                                   67,
+                            //                                   184,
+                            //                                   136,
+                            //                                   1),
+                            //                             ),
+                            //                             borderRadius:
+                            //                                 BorderRadius
+                            //                                     .circular(
+                            //                                         30),
+                            //                           ),
+                            //                           child: Row(
+                            //                             children: [
+                            //                               SvgPicture.asset(
+                            //                                   'assets/icons/edit_icon.svg'),
+                            //                               SizedBox(
+                            //                                   width: 4),
+                            //                               const CustomText(
+                            //                                 text:
+                            //                                     'Edit',
+                            //                                 fontSize:
+                            //                                     14,
+                            //                                 fontWeight:
+                            //                                     FontWeight
+                            //                                         .w400,
+                            //                                 color: Color
+                            //                                     .fromRGBO(
+                            //                                         67,
+                            //                                         184,
+                            //                                         136,
+                            //                                         1),
+                            //                               ),
+                            //                             ],
+                            //                           ),
+                            //                         ),
+                            //                       ),
+                            //                       const SizedBox(
+                            //                           width: 8),
+                            //                       GestureDetector(
+                            //                         onTap: () async {
+                            //                           final shouldDelete =
+                            //                               await showDialog<
+                            //                                   bool>(
+                            //                             context:
+                            //                                 context,
+                            //                             builder:
+                            //                                 (context) {
+                            //                               return AlertDialog(
+                            //                                 title: Text(
+                            //                                     "Confirm Delete"),
+                            //                                 content: Text(
+                            //                                     "Are you sure you want to delete this question?"),
+                            //                                 actions: [
+                            //                                   TextButton(
+                            //                                     onPressed: () => Navigator.pop(
+                            //                                         context,
+                            //                                         false), // Cancel
+                            //                                     child: Text(
+                            //                                         "Cancel"),
+                            //                                   ),
+                            //                                   TextButton(
+                            //                                     onPressed: () => Navigator.pop(
+                            //                                         context,
+                            //                                         true), // Confirm
+                            //                                     child: Text(
+                            //                                         "Delete",
+                            //                                         style:
+                            //                                             TextStyle(color: Colors.red)),
+                            //                                   ),
+                            //                                 ],
+                            //                               );
+                            //                             },
+                            //                           );
+
+                            //                           if (shouldDelete ==
+                            //                               true) {
+                            //                             final messenger =
+                            //                                 ScaffoldMessenger.of(
+                            //                                     context); // Store before pop
+                            //                             final message = await ref
+                            //                                 .read(questionsControllerProvider
+                            //                                     .notifier)
+                            //                                 .deleteQuestion(
+
+                            //                                     question
+                            //                                         .id!);
+
+                            //                             messenger.showSnackBar(
+                            //                                 SnackBar(
+                            //                                     content:
+                            //                                         Text(message)));
+                            //                           }
+                            //                         },
+                            //                         child: Container(
+                            //                           padding:
+                            //                               const EdgeInsets
+                            //                                   .symmetric(
+                            //                             horizontal: 16,
+                            //                             vertical: 8,
+                            //                           ),
+                            //                           decoration:
+                            //                               BoxDecoration(
+                            //                             color: Color
+                            //                                 .fromRGBO(
+                            //                                     251,
+                            //                                     5,
+                            //                                     108,
+                            //                                     1),
+                            //                             borderRadius:
+                            //                                 BorderRadius
+                            //                                     .circular(
+                            //                                         30),
+                            //                           ),
+                            //                           child:
+                            //                               const CustomText(
+                            //                             text: 'Delete',
+                            //                             fontSize: 14,
+                            //                             fontWeight:
+                            //                                 FontWeight
+                            //                                     .w400,
+                            //                             color: Colors
+                            //                                 .white,
+                            //                           ),
+                            //                         ),
+                            //                       ),
+                            //                     ],
+                            //                   ),
+                            //                 ],
+                            //               ),
+                            //             ),
+                            //             SizedBox(height: 20),
+                            //             CustomButton(
+                            //                 buttonTitle: 'Add Answer',
+                            //                 onTap: () {
+                            //                   Navigator.push(
+                            //                     context,
+                            //                     MaterialPageRoute(
+                            //                       builder: (context) =>
+                            //                           AddAnswerScreen(
+                            //                         question: question
+                            //                             .prompt!,
+                            //                         questionId:
+                            //                             question.id!,
+                            //                         userId: question
+                            //                             .userId!,
+                            //                       ),
+                            //                     ),
+                            //                   );
+                            //                 }),
+                            //           ],
+                            //         ),
+                            //       );
+                            //     },
+                            //   );
+                          },
+                          error: (error, st) =>
+                              Center(child: Text("Error: $error")),
+                          loading: () => const Center(
+                              child: CupertinoActivityIndicator())),
+                      // GridView.builder(
+                      //   padding: EdgeInsets.zero,
+                      //   shrinkWrap: true,
+                      //   physics: const NeverScrollableScrollPhysics(),
+                      //   gridDelegate:
+                      //       const SliverGridDelegateWithFixedCrossAxisCount(
+                      //     crossAxisCount: 2,
+                      //     crossAxisSpacing: 1,
+                      //     mainAxisSpacing: 1,
+                      //     childAspectRatio: 2,
+                      //   ),
+                      //   itemCount: questions.length,
+                      //   itemBuilder: (context, index) {
+                      //     final question = questions[index];
+                      //     return Row(
+                      //       children: [
+                      //         SizedBox(
+                      //           height: 48,
+                      //           width: 48,
+                      //           child: question['image']!.endsWith('.svg')
+                      //               ? SvgPicture.asset(question['image']!)
+                      //               : Image.asset(
+                      //                   question['image']!,
+                      //                   width: 40,
+                      //                   height: 40,
+                      //                 ),
+                      //         ),
+                      //         const SizedBox(width: 12),
+                      //         Expanded(
+                      //           child: Column(
+                      //             crossAxisAlignment: CrossAxisAlignment.start,
+                      //             mainAxisAlignment: MainAxisAlignment.center,
+                      //             children: [
+                      //               CustomText(
+                      //                 text: question['title']!,
+                      //                 color:
+                      //                     const Color.fromRGBO(53, 49, 45, 1),
+                      //                 fontSize: 16,
+                      //                 fontWeight: FontWeight.w400,
+                      //               ),
+                      //               const SizedBox(height: 4),
+                      //               CustomText(
+                      //                 text: question['author']!,
+                      //                 color: const Color.fromRGBO(
+                      //                     119, 119, 121, 1),
+                      //                 fontSize: 12,
+                      //                 fontWeight: FontWeight.w400,
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     );
+                      //   },
+                      // ),
                       const SizedBox(height: 40),
                       const CustomText(
                         text: 'Most Popular Questions',
