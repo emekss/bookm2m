@@ -56,7 +56,7 @@ class BooksController extends StateNotifier<AsyncValue<List<Books>>> {
       showSuccessSnackBar(context, message);
       print("✅ Book created successfully: $message");
 
-      Navigator.pop(context);
+      //Navigator.pop(context);
       await fetchBooks();
 
       return message;
@@ -72,6 +72,7 @@ class BooksController extends StateNotifier<AsyncValue<List<Books>>> {
 
   /// Update an existing question and refresh the list
   Future<String> updateBooks({
+    required BuildContext context,
     required String bookId,
     required String title,
     required String dedication,
@@ -81,6 +82,7 @@ class BooksController extends StateNotifier<AsyncValue<List<Books>>> {
     required List<String> questions,
     required List<String> answers,
   }) async {
+    final previousState = state;
     state = const AsyncValue.loading();
     try {
       final message = await repository.updateBooks(
@@ -95,7 +97,8 @@ class BooksController extends StateNotifier<AsyncValue<List<Books>>> {
       await fetchBooks(); // Refresh questions list
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      showErrorSnackBar(context, e.toString());
+      state = previousState;
       return e.toString();
     }
   }

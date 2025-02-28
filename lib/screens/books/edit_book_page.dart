@@ -4,31 +4,44 @@ import 'package:book_app_m2m/components/custom_button.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:book_app_m2m/components/custom_textfield.dart';
 import 'package:book_app_m2m/screens/books/choose_book_name_screen.dart';
-import 'package:book_app_m2m/services/book_repo.dart';
 import 'package:dashed_rect/dashed_rect.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 import 'package:svg_flutter/svg.dart';
 
 import '../../api/answer/answer_controller.dart';
 import '../../api/book/book_controller.dart';
 import '../../api/questions/questions_controller.dart';
 import '../../models/answers.dart';
+import '../../models/books.dart';
 import '../../models/questions.dart';
+import 'add_question_edit_page.dart';
 import 'widgets/question_card.dart';
 
-class CreateBookScreen extends ConsumerStatefulWidget {
-  const CreateBookScreen({super.key});
+class EditBookScreen extends ConsumerStatefulWidget {
+  const EditBookScreen({
+    super.key,
+    required this.bookTitle,
+    required this.dedication,
+    required this.coverImgId,
+    required this.bookId,
+    required this.volumeNumber,
+    required this.bookImage,
+    required this.book,
+  });
+
+  final String bookImage;
+  final String bookTitle, dedication, coverImgId, bookId, volumeNumber;
+  final Books book;
 
   @override
-  ConsumerState<CreateBookScreen> createState() => _CreateBookScreenState();
+  ConsumerState<EditBookScreen> createState() => _EditBookScreenState();
 }
 
-class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
+class _EditBookScreenState extends ConsumerState<EditBookScreen> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController dedicationController = TextEditingController();
   final TextEditingController volumeController = TextEditingController();
@@ -160,7 +173,10 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
                                     image: FileImage(_selectedImage!),
                                     fit: BoxFit.cover,
                                   )
-                                : null,
+                                : DecorationImage(
+                                    image: NetworkImage(widget.bookImage),
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                           child: Center(
                             child: Column(
@@ -186,7 +202,7 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
                     SizedBox(height: 20),
                     CustomTextfield(
                       controller: titleController,
-                      hintText: 'Book Title',
+                      hintText: 'Book Title - ${widget.bookTitle}',
                     ),
                     // SizedBox(height: 20),
                     // InkWell(
@@ -281,12 +297,13 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
                     SizedBox(height: 10),
                     CustomTextfield(
                       controller: dedicationController,
-                      hintText: 'Dedication or Name of Person',
+                      hintText:
+                          'Dedication or Name of Person: ${widget.dedication}',
                     ),
                     SizedBox(height: 20),
                     CustomTextfield(
                       controller: volumeController,
-                      hintText: 'Volume Number',
+                      hintText: 'Volume Number: ${widget.volumeNumber}',
                       allowsOnlyNumber: true,
                     ),
                     SizedBox(height: 60),
@@ -1041,41 +1058,49 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
   }
 
   Future<void> _onNextPressed(BuildContext context) async {
-    if (titleController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please input a title")),
-      );
-    } else if (dedicationController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please input a dedication")),
-      );
-    } else if (volumeController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please input a volume number")),
-      );
-    } else {
-      // ref.read(bookControllerProvider.notifier).createBooks(
-      //     context: context,
-      //     title: titleController.text,
-      //     dedication: dedicationController.text,
-      //     coverImage: _selectedImage!,
-      //     volumeNumber: int.parse(volumeController.text),
-      //     questions: selectedQuestionsIds,
-      //     answers: selectedAnswersIds);
+    // if (titleController.text.isEmpty) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text("Please input a title")),
+    //   );
+    // } else if (dedicationController.text.isEmpty) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text("Please input a dedication")),
+    //   );
+    // } else if (volumeController.text.isEmpty) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text("Please input a volume number")),
+    //   );
+    // } else {
+    // ref.read(bookControllerProvider.notifier).createBooks(
+    //     context: context,
+    //     title: titleController.text,
+    //     dedication: dedicationController.text,
+    //     coverImage: _selectedImage!,
+    //     volumeNumber: int.parse(volumeController.text),
+    //     questions: selectedQuestionsIds,
+    //     answers: selectedAnswersIds);
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChooseBookNameScreen(
-            bookTitle: titleController.text,
-            bookDedication: dedicationController.text,
-            coverImgId: 'create',
-            bookId: 'create',
-            bookImage: _selectedImage!,
-            bookVolume: int.parse(volumeController.text),
-          ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddEditBookNameScreen(
+          bookTitle: titleController.text.isEmpty
+              ? widget.bookTitle
+              : titleController.text.trim(),
+          bookDedication: dedicationController.text.isEmpty
+              ? widget.dedication
+              : dedicationController.text.trim(),
+          coverImgId: widget.coverImgId,
+          bookId: widget.bookId,
+          bookImage: _selectedImage ?? File('path'),
+          bookVolume: volumeController.text.isEmpty
+              ? int.parse(widget.volumeNumber)
+              : int.parse(volumeController.text.trim()),
+          editedImage: widget.bookImage,
+          preselectedQuestions: widget.book.questions!,
         ),
-      );
-    }
+      ),
+    );
+    // }
   }
 }

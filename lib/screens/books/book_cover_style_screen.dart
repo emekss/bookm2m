@@ -9,16 +9,26 @@ import 'package:svg_flutter/svg.dart';
 import '../../models/questions.dart';
 
 class BookCoverStyleScreen extends StatefulWidget {
-  const BookCoverStyleScreen({super.key, required this.questionList, required this.bookTitle,
-    required this.bookDedication,
-    required this.bookVolume,
-    required this.bookImage,});
+  const BookCoverStyleScreen(
+      {super.key,
+      required this.questionList,
+      required this.bookTitle,
+      required this.bookDedication,
+      required this.coverImgId,
+      required this.bookId,
+      required this.bookVolume,
+      required this.bookImage,
+      this.editedImage});
 
   final List<Questions> questionList;
   final String bookTitle;
   final String bookDedication;
+  final String coverImgId;
+  final String bookId;
   final int bookVolume;
   final File bookImage;
+
+  final String? editedImage;
 
   @override
   State<BookCoverStyleScreen> createState() => _BookCoverStyleScreenState();
@@ -177,10 +187,11 @@ class _BookCoverStyleScreenState extends State<BookCoverStyleScreen> {
                                 child: SizedBox(
                                   height: 215,
                                   width: 159,
-                                  child: Image.asset(
-                                    pObj['image'].toString(),
-                                    fit: BoxFit.contain,
-                                  ),
+                                  child: widget.editedImage != null
+                                      ? Image.network(widget.editedImage!)
+                                      : Image.file(
+                                          widget.bookImage,
+                                        ),
                                 ),
                               ),
                               SizedBox(height: 10),
@@ -240,8 +251,11 @@ class _BookCoverStyleScreenState extends State<BookCoverStyleScreen> {
                               questionList: widget.questionList,
                               bookTitle: widget.bookTitle,
                               bookDedication: widget.bookDedication,
+                              coverImgId: widget.coverImgId,
+                              bookId: widget.bookId,
                               bookVolume: widget.bookVolume,
                               bookImage: widget.bookImage,
+                              editedImage: widget.editedImage,
                             ),
                           ),
                         );

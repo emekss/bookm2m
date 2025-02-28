@@ -11,20 +11,25 @@ import '../../api/questions/questions_controller.dart';
 import '../../models/questions.dart';
 
 class OrderConfirmedScreen extends ConsumerStatefulWidget {
-  const OrderConfirmedScreen({
-    super.key,
-    required this.questionList,
-    required this.bookTitle,
-    required this.bookDedication,
-    required this.bookVolume,
-    required this.bookImage,
-  });
+  const OrderConfirmedScreen(
+      {super.key,
+      required this.questionList,
+      required this.bookTitle,
+      required this.bookDedication,
+      required this.coverImgId,
+      required this.bookId,
+      required this.bookVolume,
+      required this.bookImage,
+      this.editedImage});
 
   final List<Questions> questionList;
   final String bookTitle;
   final String bookDedication;
+  final String coverImgId, bookId;
   final int bookVolume;
   final File bookImage;
+
+  final String? editedImage;
 
   @override
   ConsumerState<OrderConfirmedScreen> createState() =>
@@ -179,27 +184,57 @@ class _OrderConfirmedScreenState extends ConsumerState<OrderConfirmedScreen> {
                         ? 'please wait..'
                         : 'Continue',
                     onTap: () {
-                      ref
-                          .read(bookControllerProvider.notifier)
-                          .createBooks(
-                            context: context,
-                            title: widget.bookTitle,
-                            dedication: widget.bookDedication,
-                            coverImage: widget.bookImage,
-                            volumeNumber: widget.bookVolume,
-                            questions:
-                                widget.questionList.map((e) => e.id!).toList(),
-                            answers: widget.questionList
-                                .expand((question) => question.answers!
-                                    .map((answer) => answer.id!))
-                                .toList(),
-                          )
-                          .then((_) => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => OrderTrackingScreen(),
-                                ),
-                              ));
+                      if (widget.coverImgId != 'create') {
+                        // print(
+                        //     "bookId: ${widget.bookId} , title: ${widget.bookTitle}, dedication: ${widget.bookDedication}, coverImageId: ${widget.coverImgId}, volumeNumber: ${widget.bookVolume}, qlist: ${widget.questionList.map((e) => e.id!).toList()}, alist: ${widget.questionList.expand((question) => question.answers!.map((answer) => answer.id!)).toList()}");
+                        ref
+                            .read(bookControllerProvider.notifier)
+                            .updateBooks(
+                              context: context,
+                              bookId: widget.bookId,
+                              title: widget.bookTitle,
+                              dedication: widget.bookDedication,
+                              coverImageId: widget.coverImgId,
+                              volumeNumber: widget.bookVolume,
+                              status: "PUBLISHED",
+                              questions: widget.questionList
+                                  .map((e) => e.id!)
+                                  .toList(),
+                              answers: widget.questionList
+                                  .expand((question) => question.answers!
+                                      .map((answer) => answer.id!))
+                                  .toList(),
+                            )
+                            .then((_) => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => OrderTrackingScreen(),
+                                  ),
+                                ));
+                      } else {
+                        ref
+                            .read(bookControllerProvider.notifier)
+                            .createBooks(
+                              context: context,
+                              title: widget.bookTitle,
+                              dedication: widget.bookDedication,
+                              coverImage: widget.bookImage,
+                              volumeNumber: widget.bookVolume,
+                              questions: widget.questionList
+                                  .map((e) => e.id!)
+                                  .toList(),
+                              answers: widget.questionList
+                                  .expand((question) => question.answers!
+                                      .map((answer) => answer.id!))
+                                  .toList(),
+                            )
+                            .then((_) => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => OrderTrackingScreen(),
+                                  ),
+                                ));
+                      }
                     },
                   )
                 ],

@@ -18,15 +18,22 @@ class OrderPageScreen extends StatefulWidget {
     required this.questionList,
     required this.bookTitle,
     required this.bookDedication,
+    required this.coverImgId,
+    required this.bookId,
     required this.bookVolume,
     required this.bookImage,
+    this.editedImage
   });
 
   final List<Questions> questionList;
   final String bookTitle;
   final String bookDedication;
+  final String coverImgId;
+  final String bookId;
   final int bookVolume;
   final File bookImage;
+
+  final String? editedImage;
 
   @override
   State<OrderPageScreen> createState() => _OrderPageScreenState();
@@ -267,8 +274,11 @@ class _OrderPageScreenState extends State<OrderPageScreen> {
                           questionList: widget.questionList,
                           bookTitles: widget.bookTitle,
                           bookDedication: widget.bookDedication,
+                          coverImgId: widget.coverImgId,
+                          bookId: widget.bookId,
                           bookVolume: widget.bookVolume,
                           bookImage: widget.bookImage,
+                          editedImg: widget.editedImage,
                           onCancel: () => Navigator.pop(context),
                         ),
                       );

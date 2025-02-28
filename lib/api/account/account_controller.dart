@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/user_profile.dart';
@@ -23,7 +25,7 @@ class AccountController extends StateNotifier<AsyncValue<UserProfile>> {
   }
 
   /// Create a new question and refresh the list
-  Future<String> updateProfile({
+  Future<String> updateProfiles({
     required String firstName,
     required String lastName,
     required String phoneNumber,
@@ -31,9 +33,10 @@ class AccountController extends StateNotifier<AsyncValue<UserProfile>> {
     required String motivationalQuote,
     required String profileImageId,
   }) async {
+    final previousState = state;
     state = const AsyncValue.loading();
     try {
-      final message = await repository.updateUser(
+      final message = await repository.updateUsers(
           firstName: firstName,
           lastName: lastName,
           phoneNumber: phoneNumber,
@@ -43,7 +46,40 @@ class AccountController extends StateNotifier<AsyncValue<UserProfile>> {
       await fetchUserProfile(); // Refresh questions list
       return message;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = previousState;
+      return e.toString();
+    }
+  }
+
+    Future<String> updateProfile({
+    String? firstName,
+    String? lastName,
+    String? phoneNumber,
+    String? motivationalQuote,
+    File? profileImage,
+  }) async {
+    final previousState = state;
+    state = const AsyncValue.loading();
+
+    try {
+      Map<String, dynamic> updatedFields = {};
+
+      if (firstName != null) updatedFields["firstName"] = firstName;
+      if (lastName != null) updatedFields["lastName"] = lastName;
+      if (phoneNumber != null) updatedFields["phoneNumber"] = phoneNumber;
+      if (motivationalQuote != null) updatedFields["motivationalQuote"] = motivationalQuote;
+
+      // Upload image if provided
+      if (profileImage != null) {
+        String imageId = await repository.uploadProfileImage(profileImage);
+        updatedFields["profileImageId"] = imageId;
+      }
+
+      final message = await repository.updateUser(updatedFields);
+      await fetchUserProfile(); // Refresh data
+      return message;
+    } catch (e, stack) {
+      state = previousState;
       return e.toString();
     }
   }

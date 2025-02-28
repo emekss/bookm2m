@@ -13,7 +13,10 @@ class ChooseStyleScreen extends StatefulWidget {
     super.key,
     required this.questionList,
     required this.bookTitle,
+    this.networkImgUrl,
     required this.bookDedication,
+    required this.coverImgId,
+    required this.bookId,
     required this.bookVolume,
     required this.bookImage,
   });
@@ -21,8 +24,12 @@ class ChooseStyleScreen extends StatefulWidget {
   final List<Questions> questionList;
   final String bookTitle;
   final String bookDedication;
+  final String coverImgId;
+  final String bookId;
   final int bookVolume;
   final File bookImage;
+
+  final String? networkImgUrl;
 
   @override
   State<ChooseStyleScreen> createState() => _ChooseStyleScreenState();
@@ -157,9 +164,11 @@ class _ChooseStyleScreenState extends State<ChooseStyleScreen> {
                       child: SizedBox(
                         width: 350,
                         height: 247,
-                        child: Image.asset(
-                          'assets/images/book_cover.png',
-                        ),
+                        child: widget.networkImgUrl != null
+                            ? Image.network(widget.networkImgUrl!)
+                            : Image.file(
+                                widget.bookImage,
+                              ),
                       ),
                     ),
                     SizedBox(height: 30),
@@ -178,10 +187,11 @@ class _ChooseStyleScreenState extends State<ChooseStyleScreen> {
                         itemCount: bookArr.length,
                         itemBuilder: (context, index) {
                           var pObj = bookArr[index] as Map? ?? {};
-                          return SizedBox(
-                              height: 218,
-                              width: 271,
-                              child: Image.asset(pObj['image'].toString()));
+                          return widget.networkImgUrl != null
+                              ? Image.network(widget.networkImgUrl!)
+                              : Image.file(
+                                  widget.bookImage,
+                                );
                         },
                       ),
                     ),
@@ -191,15 +201,19 @@ class _ChooseStyleScreenState extends State<ChooseStyleScreen> {
                         (e) {
                           var index = bookArr.indexOf(e);
 
-                          return Container(
-                            height: 6,
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            width: 6,
-                            decoration: BoxDecoration(
-                              color: index == selectPage
-                                  ? Color.fromRGBO(67, 184, 136, 1)
-                                  : Color.fromRGBO(244, 244, 245, 1),
-                              borderRadius: BorderRadius.circular(4),
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 2.0),
+                            child: Container(
+                              height: 6,
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              width: 6,
+                              decoration: BoxDecoration(
+                                color: index == selectPage
+                                    ? Color.fromRGBO(67, 184, 136, 1)
+                                    : Color.fromRGBO(244, 244, 245, 1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
                             ),
                           );
                         },
@@ -216,8 +230,11 @@ class _ChooseStyleScreenState extends State<ChooseStyleScreen> {
                               questionList: widget.questionList,
                               bookTitle: widget.bookTitle,
                               bookDedication: widget.bookDedication,
+                              coverImgId: widget.coverImgId,
+                              bookId: widget.bookId,
                               bookVolume: widget.bookVolume,
                               bookImage: widget.bookImage,
+                              editedImage: widget.networkImgUrl,
                             ),
                           ),
                         );

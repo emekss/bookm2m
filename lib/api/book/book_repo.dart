@@ -111,7 +111,7 @@ class BooksRepository {
     } on DioException catch (e) {
       throw DioExceptions.fromDioError(e);
     } catch (e) {
-      throw Exception("Failed to update books");
+      throw Exception(e);
     }
   }
 

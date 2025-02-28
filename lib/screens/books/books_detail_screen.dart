@@ -13,6 +13,7 @@ import 'package:svg_flutter/svg.dart';
 
 import '../../api/book/book_controller.dart';
 import '../../models/books.dart';
+import 'edit_book_page.dart';
 
 class BooksDetailScreen extends ConsumerStatefulWidget {
   const BooksDetailScreen({super.key, required this.books});
@@ -219,32 +220,52 @@ class _BooksDetailScreenState extends ConsumerState<BooksDetailScreen> {
                         ),
                         Row(
                           children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: const Color.fromRGBO(67, 184, 136, 1),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditBookScreen(
+                                      bookTitle: book.title!,
+                                      dedication: book.dedication!,
+                                      coverImgId: book.coverImage!.id!,
+                                      bookId: book.id!,
+                                      volumeNumber:
+                                          book.volumeNumber.toString(),
+                                      bookImage: book.coverImage!.url!,
+                                      book: book,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
                                 ),
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.edit_outlined,
-                                    color: Color.fromRGBO(67, 184, 136, 1),
-                                    size: 15,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color:
+                                        const Color.fromRGBO(67, 184, 136, 1),
                                   ),
-                                  SizedBox(width: 4),
-                                  const CustomText(
-                                    text: 'Edit',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color.fromRGBO(67, 184, 136, 1),
-                                  ),
-                                ],
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.edit_outlined,
+                                      color: Color.fromRGBO(67, 184, 136, 1),
+                                      size: 15,
+                                    ),
+                                    SizedBox(width: 4),
+                                    const CustomText(
+                                      text: 'Edit',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color.fromRGBO(67, 184, 136, 1),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -284,6 +305,7 @@ class _BooksDetailScreenState extends ConsumerState<BooksDetailScreen> {
 
                                   messenger.showSnackBar(
                                       SnackBar(content: Text(message)));
+                                  Navigator.pop(context);
                                 }
                               },
                               child: Container(

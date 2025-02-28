@@ -16,8 +16,12 @@ class ApplePayBottomSheet extends StatelessWidget {
   final List<Questions> questionList;
   final String bookTitles;
   final String bookDedication;
+  final String coverImgId;
+  final String bookId;
   final int bookVolume;
   final File bookImage;
+
+  final String? editedImg;
 
   const ApplePayBottomSheet({
     Key? key,
@@ -30,6 +34,7 @@ class ApplePayBottomSheet extends StatelessWidget {
     required this.bookDedication,
     required this.bookVolume,
     required this.bookImage,
+    this.editedImg, required this.coverImgId, required this.bookId
   }) : super(key: key);
 
   @override
@@ -220,8 +225,11 @@ class ApplePayBottomSheet extends StatelessWidget {
                           questionList: questionList,
                           bookTitle: bookTitle,
                           bookDedication: bookDedication,
+                          coverImgId: coverImgId,
+                          bookId: bookId,
                           bookVolume: bookVolume,
                           bookImage: bookImage,
+                          editedImage: editedImg,
                         ),
                       ),
                     );

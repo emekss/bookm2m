@@ -40,6 +40,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  final _motivationalQuoteController = TextEditingController();
+
+  bool _isUpdating = false;
+
   @override
   void dispose() {
     _firstNameController.dispose();
@@ -73,6 +77,37 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         _selectedImage = File(pickedFile.path);
       });
     }
+  }
+
+  Future<void> _updateProfile() async {
+    final accountController = ref.read(accountControllerProvider.notifier);
+    final profile = ref.read(accountControllerProvider).value;
+
+    if (profile == null) return;
+
+    setState(() => _isUpdating = true);
+
+    String firstName = _firstNameController.text.trim();
+    String lastName = _lastNameController.text.trim();
+    String phone = _phoneController.text.trim();
+
+    String? firstNameUpdate =
+        firstName.isNotEmpty && firstName != profile.firstName
+            ? firstName
+            : null;
+    String? lastNameUpdate =
+        lastName.isNotEmpty && lastName != profile.lastName ? lastName : null;
+
+    String response = await accountController.updateProfile(
+      firstName: firstNameUpdate,
+      lastName: lastNameUpdate,
+      profileImage: _selectedImage,
+    );
+
+    setState(() => _isUpdating = false);
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(response)));
   }
 
   @override
@@ -130,9 +165,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                             child: Padding(
                                               padding:
                                                   const EdgeInsets.all(8.0),
-                                              child: SvgPicture.asset(
-                                                'assets/icons/person_icon.svg',
-                                              ),
+                                              child:
+                                                  profile.profileImage == null
+                                                      ? SvgPicture.asset(
+                                                          'assets/icons/person_icon.svg',
+                                                        )
+                                                      : Image.network(profile
+                                                          .profileImage!.url!),
                                             ),
                                           )),
                                 SvgPicture.asset(
@@ -152,12 +191,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             hintText: 'Last Name - ${profile.lastName}',
                             // enabled: !_isLoading,
                           ),
-                          SizedBox(height: 20),
-                          CustomTextfield(
-                            controller: _emailController,
-                            hintText: 'Email - ${profile.email}',
-                            enabled: false, // Email should not be editable
-                          ),
+                          // SizedBox(height: 20),
+                          // CustomTextfield(
+                          //   controller: _emailController,
+                          //   hintText: 'Email - ${profile.email}',
+                          //   enabled: false, // Email should not be editable
+                          // ),
                           SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
@@ -214,12 +253,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 fontWeight: FontWeight.w400,
                                 color: Color.fromRGBO(41, 42, 44, 1),
                               ),
-                              CustomText(
-                                text: formatDate(profile.lastSeen!),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Color.fromRGBO(119, 119, 121, 1),
-                              ),
+                              // CustomText(
+                              //   text: formatDate(
+                              //       profile.lastSeen!.toIso8601String()),
+                              //   fontSize: 14,
+                              //   fontWeight: FontWeight.w400,
+                              //   color: Color.fromRGBO(119, 119, 121, 1),
+                              // ),
                             ],
                           ),
                           SizedBox(height: 20),
@@ -350,26 +390,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           ),
                           SizedBox(height: 20),
                           CustomButton(
-                            buttonTitle: 'Save Details',
+                            buttonTitle:
+                                _isUpdating ? 'Saving...' : 'Save Details',
                             onTap: () {
-                              if (_firstNameController.text.isNotEmpty &&
-                                  _lastNameController.text.isNotEmpty &&
-                                  _phoneController.text.isNotEmpty) {
-                                ref
-                                    .read(accountControllerProvider.notifier)
-                                    .updateProfile(
-                                        firstName: _firstNameController.text,
-                                        lastName: _lastNameController.text,
-                                        phoneNumber: _phoneController.text,
-                                        startDate: "2024-12-28T12:34:56Z",
-                                        motivationalQuote: '',
-                                        profileImageId: 'profileImageId');
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text("Please input all fields")),
-                                );
-                              }
+                              _isUpdating ? null : _updateProfile();
                             },
                           ),
                           SizedBox(height: 20),

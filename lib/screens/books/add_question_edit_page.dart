@@ -11,35 +11,37 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
 import '../../api/questions/questions_controller.dart';
+import '../../models/books.dart';
 import '../../models/questions.dart';
 
-class ChooseBookNameScreen extends ConsumerStatefulWidget {
+class AddEditBookNameScreen extends ConsumerStatefulWidget {
   final String bookTitle;
   final String bookDedication;
   final String coverImgId;
   final String bookId;
   final int bookVolume;
   final File bookImage;
+  final List<Question> preselectedQuestions;
 
   final String? editedImage;
 
-  const ChooseBookNameScreen({
-    super.key,
-    required this.bookTitle,
-    required this.bookDedication,
-    required this.coverImgId,
-    required this.bookId,
-    required this.bookVolume,
-    required this.bookImage,
-    this.editedImage
-  });
+  const AddEditBookNameScreen(
+      {super.key,
+      required this.bookTitle,
+      required this.bookDedication,
+      required this.coverImgId,
+      required this.bookId,
+      required this.bookVolume,
+      required this.bookImage,
+      required this.preselectedQuestions,
+      this.editedImage});
 
   @override
-  ConsumerState<ChooseBookNameScreen> createState() =>
-      _ChooseBookNameScreenState();
+  ConsumerState<AddEditBookNameScreen> createState() =>
+      _AddEditBookNameScreenState();
 }
 
-class _ChooseBookNameScreenState extends ConsumerState<ChooseBookNameScreen> {
+class _AddEditBookNameScreenState extends ConsumerState<AddEditBookNameScreen> {
   bool _isChecked = false;
 
   List<Questions> questionList = [];
@@ -53,6 +55,7 @@ class _ChooseBookNameScreenState extends ConsumerState<ChooseBookNameScreen> {
   final Set<int> _selectedIndexes = {};
 
   final TextEditingController _searchController = TextEditingController();
+  late Set<int> selectedQuestionIds;
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +136,7 @@ class _ChooseBookNameScreenState extends ConsumerState<ChooseBookNameScreen> {
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children:[
+                          children: [
                             CustomText(
                               text: '${widget.bookTitle}',
                               fontSize: 22,
@@ -257,6 +260,7 @@ class _ChooseBookNameScreenState extends ConsumerState<ChooseBookNameScreen> {
                                         bookId: widget.bookId,
                                         bookVolume: widget.bookVolume,
                                         bookImage: widget.bookImage,
+                                        networkImgUrl: widget.editedImage,
                                       ),
                                     ),
                                   );
