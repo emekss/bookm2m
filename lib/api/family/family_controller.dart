@@ -63,24 +63,22 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
     }
   }
 
-  /// Update an existing question and refresh the list
+
   Future<String> updateFamily({
     // required BuildContext context,
     required String familyId,
     required String relationId,
     required bool status,
   }) async {
-    final previousState = state; // Store the previous state to restore it later
+    final previousState = state; 
     state = const AsyncValue.loading();
     try {
       final message = await repository.updateFamily(
           familyId: familyId, relationId: relationId, status: status);
-      await fetchFamily(); // Refresh questions list
-      // showSuccessSnackBar(context, message);
+      await fetchFamily(); 
       return message;
     } catch (e, stack) {
       state = previousState;
-      // showErrorSnackBar(context, e.toString());
       return e.toString();
     }
   }
