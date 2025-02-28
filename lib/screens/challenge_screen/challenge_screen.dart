@@ -256,6 +256,7 @@ class _ChallengeScreenState extends ConsumerState<ChallengeScreen> {
                                 child: ListView.builder(
                                   itemCount: challenges.length,
                                   shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index) {
                                     final challenge = challenges[index];
                                     return Padding(
@@ -330,10 +331,35 @@ class _ChallengeScreenState extends ConsumerState<ChallengeScreen> {
                                                     ),
                                                     SizedBox(width: 10),
                                                     SizedBox(
-                                                      height: 24,
-                                                      width: 78,
-                                                      child: Image.asset(
-                                                          'assets/images/asset_imagesss.png'),
+                                                      height: 50,
+                                                      child: ListView.builder(
+                                                          itemCount: challenge
+                                                                      .taggedUsers !=
+                                                                  null
+                                                              ? challenge.taggedUsers!
+                                                                      .length +
+                                                                  1
+                                                              : 0,
+                                                          scrollDirection:
+                                                              Axis.horizontal,
+                                                          shrinkWrap: true,
+                                                          physics:
+                                                              NeverScrollableScrollPhysics(),
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            // final question = data[index];
+                                                            return CircleAvatar(
+                                                              radius: 15,
+                                                              child: Center(
+                                                                child: Icon(Icons
+                                                                    .person),
+                                                              ),
+                                                              backgroundColor:
+                                                                  Colors.grey
+                                                                      .withOpacity(
+                                                                          .5),
+                                                            );
+                                                          }),
                                                     )
                                                   ],
                                                 ),
