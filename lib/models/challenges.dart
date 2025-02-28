@@ -283,7 +283,7 @@ class ProfileImage {
   String? type;
   String? fileExtension;
   String? userId;
-  String? status;
+  bool? status;
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -310,7 +310,7 @@ class ProfileImage {
     String? type,
     String? fileExtension,
     String? userId,
-    String? status,
+    bool? status,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) =>
