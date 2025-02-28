@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:book_app_m2m/screens/order/order_confirmed_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:svg_flutter/svg.dart';
+
+import '../models/questions.dart';
 
 class ApplePayBottomSheet extends StatelessWidget {
   final String bookTitle;
@@ -9,12 +13,23 @@ class ApplePayBottomSheet extends StatelessWidget {
   final String email;
   final VoidCallback onCancel;
 
+  final List<Questions> questionList;
+  final String bookTitles;
+  final String bookDedication;
+  final int bookVolume;
+  final File bookImage;
+
   const ApplePayBottomSheet({
     Key? key,
     required this.bookTitle,
     required this.price,
     required this.email,
     required this.onCancel,
+    required this.questionList,
+    required this.bookTitles,
+    required this.bookDedication,
+    required this.bookVolume,
+    required this.bookImage,
   }) : super(key: key);
 
   @override
@@ -201,7 +216,13 @@ class ApplePayBottomSheet extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => OrderConfirmedScreen(),
+                        builder: (context) => OrderConfirmedScreen(
+                          questionList: questionList,
+                          bookTitle: bookTitle,
+                          bookDedication: bookDedication,
+                          bookVolume: bookVolume,
+                          bookImage: bookImage,
+                        ),
                       ),
                     );
                   },

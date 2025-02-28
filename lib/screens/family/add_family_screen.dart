@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:book_app_m2m/api/family/family_controller.dart';
 import 'package:book_app_m2m/api/relationship/relationship_controller.dart';
 import 'package:book_app_m2m/components/custom_button.dart';
@@ -5,6 +7,7 @@ import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:book_app_m2m/components/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:svg_flutter/svg.dart';
 
 import '../../models/relationship.dart';
@@ -27,6 +30,20 @@ class _AddFamilyScreenState extends ConsumerState<AddFamilyScreen> {
 
   DateTime? selectedDate;
   //final Dio dio = Dio(); // Initialize Dio for API calls
+
+  File? _selectedImage;
+  bool? isLoading;
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
 
   /// Function to show Date Picker and format the selected date
   Future<void> selectDate(BuildContext context) async {
@@ -68,6 +85,10 @@ class _AddFamilyScreenState extends ConsumerState<AddFamilyScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please select a date")),
       );
+    } else if (_selectedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please select an image")),
+      );
     } else {
       ref.read(familyControllerProvider.notifier).createFamily(
           context: context,
@@ -75,7 +96,8 @@ class _AddFamilyScreenState extends ConsumerState<AddFamilyScreen> {
           phoneNumber: numberController.text,
           email: emailController.text,
           birthDate: formatToISO8601(selectedDate!),
-          relationId: selectedRelationshipId!);
+          relationId: selectedRelationshipId!,
+          coverImg: _selectedImage!);
 
       // print(
       //     'fullname: ${nameController.text}, phoneNumber: ${numberController.text}, email: ${emailController.text}, birthDate: ${formatToISO8601(selectedDate!)}, relationId: ${selectedRelationshipId!}');
@@ -136,25 +158,36 @@ class _AddFamilyScreenState extends ConsumerState<AddFamilyScreen> {
                 ),
                 SizedBox(height: 40),
                 Center(
-                  child: Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      Container(
-                        height: 119,
-                        width: 119,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color.fromRGBO(248, 249, 250, 1),
+                  child: _selectedImage != null
+                      ? GestureDetector(
+                          onTap: _pickImage,
+                          child: CircleAvatar(
+                            radius: 55,
+                            backgroundImage: FileImage(_selectedImage!),
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: _pickImage,
+                          child: Stack(
+                            alignment: Alignment.bottomRight,
+                            children: [
+                              Container(
+                                height: 119,
+                                width: 119,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color.fromRGBO(248, 249, 250, 1),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SvgPicture.asset(
+                                      'assets/icons/person_icon.svg'),
+                                ),
+                              ),
+                              SvgPicture.asset('assets/icons/camera_icon.svg'),
+                            ],
+                          ),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child:
-                              SvgPicture.asset('assets/icons/person_icon.svg'),
-                        ),
-                      ),
-                      SvgPicture.asset('assets/icons/camera_icon.svg'),
-                    ],
-                  ),
                 ),
                 SizedBox(height: 50),
                 CustomTextfield(

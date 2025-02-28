@@ -287,7 +287,7 @@ class _ViewMembersScreenState extends ConsumerState<ViewMembersScreen> {
                                           child: Padding(
                                             padding: const EdgeInsets.all(14.0),
                                             child: Image.network(
-                                                family.profileImage!),
+                                                family.profileImage!.url!),
                                           ),
                                         )
                                       : Container(
@@ -310,7 +310,7 @@ class _ViewMembersScreenState extends ConsumerState<ViewMembersScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   CustomText(
-                                    text: '10 posts',
+                                    text: '0 posts',
                                     color:
                                         const Color.fromRGBO(119, 119, 121, 1),
                                     fontSize: 14,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:book_app_m2m/components/apple_bottom_sheet.dart';
 import 'package:book_app_m2m/components/custom_button.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
@@ -8,8 +10,19 @@ import 'package:book_app_m2m/components/order_page_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:svg_flutter/svg.dart';
 
+import '../../models/questions.dart';
+
 class OrderPageScreen extends StatefulWidget {
-  const OrderPageScreen({super.key});
+  const OrderPageScreen({super.key, required this.questionList, required this.bookTitle,
+    required this.bookDedication,
+    required this.bookVolume,
+    required this.bookImage,});
+
+    final List<Questions> questionList;
+  final String bookTitle;
+  final String bookDedication;
+  final int bookVolume;
+  final File bookImage;
 
   @override
   State<OrderPageScreen> createState() => _OrderPageScreenState();
@@ -247,6 +260,11 @@ class _OrderPageScreenState extends State<OrderPageScreen> {
                           bookTitle: "Book Title goes here",
                           price: "13.42",
                           email: "subs@mail.com",
+                          questionList: widget.questionList,
+                              bookTitles: widget.bookTitle,
+                              bookDedication: widget.bookDedication,
+                              bookVolume: widget.bookVolume,
+                              bookImage: widget.bookImage,
                           onCancel: () => Navigator.pop(context),
                         ),
                       );

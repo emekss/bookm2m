@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 
 import '../../dio_client.dart';
@@ -8,6 +10,36 @@ class FamilyRepository {
   final DioClient dioClient;
 
   FamilyRepository({required this.dioClient});
+
+  Future<String> uploadAsset(File file) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "title": file.path
+            .split('/')
+            .last, // API requires title, but it's optional (empty string)
+        "description": 0,
+        "type": "",
+        "taggedUsers": [],
+        "file": await MultipartFile.fromFile(file.path),
+      });
+
+      final response = await dioClient.post(
+        '/api/users/assets',
+        data: formData,
+        options: Options(
+          headers: {"Content-Type": "multipart/form-data"},
+        ),
+      );
+
+      return response.data["rowId"]; // Extract rowId
+    } on DioException catch (e) {
+      print(e);
+      throw DioExceptions.fromDioError(e);
+    } catch (e) {
+      print(e);
+      throw Exception(e);
+    }
+  }
 
   Future<List<Families>> fetchFamily() async {
     try {
@@ -22,12 +54,13 @@ class FamilyRepository {
     }
   }
 
-   /// Create a new question
+  /// Create a new question
   Future<String> createFamily({
     required String fullName,
     required String phoneNumber,
     required String email,
     required String birthDate,
+    required String profileImageId,
     required String relationId,
   }) async {
     try {
@@ -38,6 +71,7 @@ class FamilyRepository {
           "phoneNumber": phoneNumber,
           "email": email,
           "birthDate": birthDate,
+          "profileImageId": profileImageId,
           "relationId": relationId,
         },
       );

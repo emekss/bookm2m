@@ -1,11 +1,24 @@
+import 'dart:io';
+
 import 'package:book_app_m2m/components/custom_button.dart';
 import 'package:book_app_m2m/screens/order/order_page_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:svg_flutter/svg.dart';
 
+import '../../models/questions.dart';
+
 class BookCoverStyleScreen extends StatefulWidget {
-  const BookCoverStyleScreen({super.key});
+  const BookCoverStyleScreen({super.key, required this.questionList, required this.bookTitle,
+    required this.bookDedication,
+    required this.bookVolume,
+    required this.bookImage,});
+
+  final List<Questions> questionList;
+  final String bookTitle;
+  final String bookDedication;
+  final int bookVolume;
+  final File bookImage;
 
   @override
   State<BookCoverStyleScreen> createState() => _BookCoverStyleScreenState();
@@ -223,7 +236,13 @@ class _BookCoverStyleScreenState extends State<BookCoverStyleScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => OrderPageScreen(),
+                            builder: (context) => OrderPageScreen(
+                              questionList: widget.questionList,
+                              bookTitle: widget.bookTitle,
+                              bookDedication: widget.bookDedication,
+                              bookVolume: widget.bookVolume,
+                              bookImage: widget.bookImage,
+                            ),
                           ),
                         );
                       },

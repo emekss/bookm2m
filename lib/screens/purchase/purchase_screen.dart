@@ -97,12 +97,12 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                   SizedBox(height: 5),
                                   InkWell(
                                     onTap: () {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                OrderPageScreen()),
-                                      );
+                                      // Navigator.pushReplacement(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //       builder: (context) =>
+                                      //           OrderPageScreen()),
+                                      // );
                                     },
                                     child: Row(
                                       children: [

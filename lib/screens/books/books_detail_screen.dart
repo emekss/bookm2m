@@ -8,20 +8,22 @@ import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
+import '../../api/book/book_controller.dart';
 import '../../models/books.dart';
 
-class BooksDetailScreen extends StatefulWidget {
+class BooksDetailScreen extends ConsumerStatefulWidget {
   const BooksDetailScreen({super.key, required this.books});
 
   final Books books;
 
   @override
-  State<BooksDetailScreen> createState() => _BooksDetailScreenState();
+  ConsumerState<BooksDetailScreen> createState() => _BooksDetailScreenState();
 }
 
-class _BooksDetailScreenState extends State<BooksDetailScreen> {
+class _BooksDetailScreenState extends ConsumerState<BooksDetailScreen> {
   String? selectedValue;
   bool isDropdownOpen = false;
   @override
@@ -246,20 +248,59 @@ class _BooksDetailScreenState extends State<BooksDetailScreen> {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Color.fromRGBO(251, 5, 108, 1),
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: const CustomText(
-                                text: 'Delete',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.white,
+                            GestureDetector(
+                              onTap: () async {
+                                final shouldDelete = await showDialog<bool>(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text("Confirm Delete"),
+                                      content: Text(
+                                          "Are you sure you want to delete this book?"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(
+                                              context, false), // Cancel
+                                          child: Text("Cancel"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(
+                                              context, true), // Confirm
+                                          child: Text("Delete",
+                                              style:
+                                                  TextStyle(color: Colors.red)),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+
+                                if (shouldDelete == true) {
+                                  final messenger = ScaffoldMessenger.of(
+                                      context); // Store before pop
+                                  final message = await ref
+                                      .read(bookControllerProvider.notifier)
+                                      .deleteBooks(book.id!);
+
+                                  messenger.showSnackBar(
+                                      SnackBar(content: Text(message)));
+                                }
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Color.fromRGBO(251, 5, 108, 1),
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: const CustomText(
+                                  text: 'Delete',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ],

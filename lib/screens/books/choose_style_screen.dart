@@ -1,11 +1,28 @@
+import 'dart:io';
+
 import 'package:book_app_m2m/components/custom_button.dart';
 import 'package:book_app_m2m/screens/books/book_cover_style_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:svg_flutter/svg.dart';
 
+import '../../models/questions.dart';
+
 class ChooseStyleScreen extends StatefulWidget {
-  const ChooseStyleScreen({super.key});
+  const ChooseStyleScreen({
+    super.key,
+    required this.questionList,
+    required this.bookTitle,
+    required this.bookDedication,
+    required this.bookVolume,
+    required this.bookImage,
+  });
+
+  final List<Questions> questionList;
+  final String bookTitle;
+  final String bookDedication;
+  final int bookVolume;
+  final File bookImage;
 
   @override
   State<ChooseStyleScreen> createState() => _ChooseStyleScreenState();
@@ -195,7 +212,13 @@ class _ChooseStyleScreenState extends State<ChooseStyleScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => BookCoverStyleScreen(),
+                            builder: (context) => BookCoverStyleScreen(
+                              questionList: widget.questionList,
+                              bookTitle: widget.bookTitle,
+                              bookDedication: widget.bookDedication,
+                              bookVolume: widget.bookVolume,
+                              bookImage: widget.bookImage,
+                            ),
                           ),
                         );
                       },

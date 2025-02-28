@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:book_app_m2m/components/custom_button.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:book_app_m2m/components/custom_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:svg_flutter/svg.dart';
 
@@ -59,6 +62,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     });
   }
 
+  File? _selectedImage;
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final accountState = ref.watch(accountControllerProvider);
@@ -94,21 +110,31 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             child: Stack(
                               alignment: Alignment.bottomRight,
                               children: [
-                                Container(
-                                  padding: EdgeInsets.all(14),
-                                  height: 119,
-                                  width: 119,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color.fromRGBO(248, 249, 250, 1),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: SvgPicture.asset(
-                                      'assets/icons/person_icon.svg',
-                                    ),
-                                  ),
-                                ),
+                                GestureDetector(
+                                    onTap: _pickImage,
+                                    child: _selectedImage != null
+                                        ? CircleAvatar(
+                                            radius: 50,
+                                            backgroundImage:
+                                                FileImage(_selectedImage!),
+                                          )
+                                        : Container(
+                                            padding: EdgeInsets.all(14),
+                                            height: 119,
+                                            width: 119,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color.fromRGBO(
+                                                  248, 249, 250, 1),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: SvgPicture.asset(
+                                                'assets/icons/person_icon.svg',
+                                              ),
+                                            ),
+                                          )),
                                 SvgPicture.asset(
                                     'assets/icons/camera_icon.svg'),
                               ],

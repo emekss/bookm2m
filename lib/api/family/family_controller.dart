@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:book_app_m2m/widgets/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,16 +36,22 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
     required String email,
     required String birthDate,
     required String relationId,
+    required File coverImg,
   }) async {
     final previousState = state; // Store the previous state to restore it later
     state = const AsyncValue.loading();
     try {
+      final rowId = await repository.uploadAsset(coverImg);
+      showSuccessSnackBar(context, "✅ File uploaded successfully");
+      print("✅ File uploaded successfully");
       final message = await repository.createFamily(
-          fullName: fullName,
-          phoneNumber: phoneNumber,
-          email: email,
-          birthDate: birthDate,
-          relationId: relationId);
+        fullName: fullName,
+        phoneNumber: phoneNumber,
+        email: email,
+        birthDate: birthDate,
+        profileImageId: rowId,
+        relationId: relationId,
+      );
       showSuccessSnackBar(context, message);
       await fetchFamily();
       Navigator.pop(context);
@@ -109,11 +117,11 @@ class FamilyController extends StateNotifier<AsyncValue<List<Families>>> {
 // Provider for QuestionsController
 final familyControllerProvider = StateNotifierProvider.autoDispose<
     FamilyController, AsyncValue<List<Families>>>(
-  (ref) => FamilyController(ref.watch(ordersRepositoryProvider)),
+  (ref) => FamilyController(ref.watch(familyRepositoryProvider)),
 );
 
 // Provider for QuestionsRepository
-final ordersRepositoryProvider = Provider((ref) {
+final familyRepositoryProvider = Provider((ref) {
   final dioClient = ref.read(dioClientProvider);
   return FamilyRepository(dioClient: dioClient);
 });

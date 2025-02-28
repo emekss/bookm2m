@@ -1,31 +1,41 @@
+import 'dart:io';
+
 import 'package:book_app_m2m/components/custom_button.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:book_app_m2m/screens/books/choose_style_screen.dart';
 import 'package:book_app_m2m/screens/books/widgets/question_card.dart';
 import 'package:book_app_m2m/screens/question/add_question_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:svg_flutter/svg.dart';
 
-class ChooseBookNameScreen extends StatefulWidget {
+import '../../api/questions/questions_controller.dart';
+import '../../models/questions.dart';
+
+class ChooseBookNameScreen extends ConsumerStatefulWidget {
   final String bookTitle;
   final String bookDedication;
   final int bookVolume;
-  final String bookImageUrl;
+  final File bookImage;
 
   const ChooseBookNameScreen({
     super.key,
     required this.bookTitle,
     required this.bookDedication,
     required this.bookVolume,
-    required this.bookImageUrl,
+    required this.bookImage,
   });
 
   @override
-  State<ChooseBookNameScreen> createState() => _ChooseBookNameScreenState();
+  ConsumerState<ChooseBookNameScreen> createState() =>
+      _ChooseBookNameScreenState();
 }
 
-class _ChooseBookNameScreenState extends State<ChooseBookNameScreen> {
+class _ChooseBookNameScreenState extends ConsumerState<ChooseBookNameScreen> {
   bool _isChecked = false;
+
+  List<Questions> questionList = [];
 
   void _handleCheckboxChange(bool? value) {
     setState(() {
@@ -33,8 +43,13 @@ class _ChooseBookNameScreenState extends State<ChooseBookNameScreen> {
     });
   }
 
+  final Set<int> _selectedIndexes = {};
+
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    final questionState = ref.read(questionsControllerProvider);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         elevation: 0,
@@ -146,6 +161,7 @@ class _ChooseBookNameScreenState extends State<ChooseBookNameScreen> {
                           SizedBox(width: 10),
                           Expanded(
                             child: TextField(
+                              controller: _searchController,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: 'Search here',
@@ -156,6 +172,11 @@ class _ChooseBookNameScreenState extends State<ChooseBookNameScreen> {
                                   color: Color.fromRGBO(41, 42, 44, 0.61),
                                 ),
                               ),
+                              onChanged: (query) {
+                                ref
+                                    .read(questionsControllerProvider.notifier)
+                                    .searchQuestions(query);
+                              },
                             ),
                           ),
                           SvgPicture.asset(
@@ -165,149 +186,105 @@ class _ChooseBookNameScreenState extends State<ChooseBookNameScreen> {
                         ],
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 24),
-                        // Question Cards
-                        QuestionCard(
-                          topic: 'Question 1 | Topic',
-                          question:
-                              'How would you describe our family\'s humour as if to a stranger?',
-                          isHighlighted: true,
-                          answerLength: '1',
-                        ),
-                        const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: const Color.fromRGBO(248, 249, 250, 1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                    SizedBox(
+                      height: 20,
+                    ),
+                    questionState.when(
+                        data: (questions) {
+                          return Column(
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                          height: 27,
-                                          width: 27,
-                                          child: Image.asset(
-                                              'assets/images/user.png')),
-                                      SizedBox(width: 10),
-                                      CustomText(
-                                        text: 'Tabish Bin Tahir',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color:
-                                            const Color.fromRGBO(41, 42, 44, 1),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    width: 21,
-                                    height: 21,
-                                    child: Checkbox(
-                                      value:
-                                          _isChecked, // Use the state variable instead of hardcoded true
-                                      onChanged: _handleCheckboxChange,
-                                      activeColor:
-                                          const Color.fromRGBO(67, 184, 136, 1),
-                                      side: WidgetStateBorderSide.resolveWith(
-                                        (states) => BorderSide(
-                                          width: 1.0,
-                                          color: states.contains(
-                                                  WidgetState.selected)
-                                              ? const Color.fromRGBO(
-                                                  67, 184, 136, 1)
-                                              : const Color.fromRGBO(
-                                                  67, 184, 136, 1),
-                                        ),
-                                      ),
-                                      fillColor: WidgetStateProperty
-                                          .resolveWith<Color>(
-                                        (Set<WidgetState> states) {
-                                          if (states
-                                              .contains(WidgetState.selected)) {
-                                            return const Color.fromRGBO(
-                                                67, 184, 136, 1);
-                                          }
-                                          return const Color.fromRGBO(
-                                              242, 242, 244, 1);
-                                        },
+                              questions.isEmpty
+                                  ? const Center(
+                                      child: Text('No questions found'))
+                                  : ListView.builder(
+                                      itemCount: questions.length,
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        final question = questions[index];
+                                        final isSelected =
+                                            _selectedIndexes.contains(index);
+                                        return InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              if (isSelected) {
+                                                _selectedIndexes.remove(index);
+                                              } else {
+                                                _selectedIndexes.add(index);
+                                              }
+                                            });
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 5.0),
+                                            child: QuestionCard(
+                                              topic:
+                                                  'Question ${index + 1} | Topic',
+                                              question:
+                                                  question.prompt ?? "Unknown",
+                                              isHighlighted: isSelected,
+                                              answerLength: question
+                                                  .answers!.length
+                                                  .toString(),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                              SizedBox(height: 30),
+                              CustomButton(
+                                buttonTitle: 'Choose Style',
+                                onTap: () {
+                                  final selectedQuestions = _selectedIndexes
+                                      .map((index) => questions[index])
+                                      .toList();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ChooseStyleScreen(
+                                        questionList: selectedQuestions,
+                                        bookTitle: widget.bookTitle,
+                                        bookDedication: widget.bookDedication,
+                                        bookVolume: widget.bookVolume,
+                                        bookImage: widget.bookImage,
                                       ),
                                     ),
+                                  );
+                                },
+                              ),
+                              SizedBox(height: 20),
+                              GestureDetector(
+                                onTap: () {},
+                                child: Container(
+                                  height: 47,
+                                  padding: EdgeInsets.only(
+                                      top: 13, bottom: 13, left: 10, right: 10),
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: const Color.fromRGBO(
+                                            67, 184, 136, 1)),
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                ],
+                                  child: Center(
+                                    child: CustomText(
+                                      text: 'Save draft',
+                                      color:
+                                          const Color.fromRGBO(67, 184, 136, 1),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
                               ),
-                              SizedBox(height: 8),
-                              CustomText(
-                                text:
-                                    'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem psum has been the industry\'s standard dummy text ever since the 1500s,',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                color: const Color.fromRGBO(119, 119, 121, 1),
-                              ),
+                              SizedBox(height: 30),
                             ],
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        QuestionCard(
-                          topic: 'Question 1 | Topic',
-                          question:
-                              'How would you describe our family\'s humour as if to a stranger?',
-                          answerLength: '2',
-                        ),
-                        const SizedBox(height: 16),
-                        QuestionCard(
-                          topic: 'Question 1 | Topic',
-                          question:
-                              'How would you describe our family\'s humour as if to a stranger?',
-                          answerLength: '1',
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 30),
-                    CustomButton(
-                      buttonTitle: 'Choose Style',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChooseStyleScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        height: 47,
-                        padding: EdgeInsets.only(
-                            top: 13, bottom: 13, left: 10, right: 10),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                              color: const Color.fromRGBO(67, 184, 136, 1)),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: CustomText(
-                            text: 'Save draft',
-                            color: const Color.fromRGBO(67, 184, 136, 1),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 30),
+                          );
+                        },
+                        error: (error, st) => Text(error.toString()),
+                        loading: () => const CupertinoActivityIndicator()),
                   ],
                 ),
               ],

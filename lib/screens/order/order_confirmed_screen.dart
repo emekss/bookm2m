@@ -1,18 +1,40 @@
+import 'dart:io';
+
 import 'package:book_app_m2m/components/custom_button.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:book_app_m2m/screens/order/order_tracking.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class OrderConfirmedScreen extends StatefulWidget {
-  const OrderConfirmedScreen({super.key});
+import '../../api/book/book_controller.dart';
+import '../../api/questions/questions_controller.dart';
+import '../../models/questions.dart';
+
+class OrderConfirmedScreen extends ConsumerStatefulWidget {
+  const OrderConfirmedScreen({
+    super.key,
+    required this.questionList,
+    required this.bookTitle,
+    required this.bookDedication,
+    required this.bookVolume,
+    required this.bookImage,
+  });
+
+  final List<Questions> questionList;
+  final String bookTitle;
+  final String bookDedication;
+  final int bookVolume;
+  final File bookImage;
 
   @override
-  State<OrderConfirmedScreen> createState() => _OrderConfirmedScreenState();
+  ConsumerState<OrderConfirmedScreen> createState() =>
+      _OrderConfirmedScreenState();
 }
 
-class _OrderConfirmedScreenState extends State<OrderConfirmedScreen> {
+class _OrderConfirmedScreenState extends ConsumerState<OrderConfirmedScreen> {
   @override
   Widget build(BuildContext context) {
+    final bookState = ref.watch(bookControllerProvider);
     return Scaffold(
       backgroundColor: const Color.fromRGBO(67, 184, 136, 1),
       body: Center(
@@ -153,14 +175,31 @@ class _OrderConfirmedScreenState extends State<OrderConfirmedScreen> {
                   ),
                   SizedBox(height: 20),
                   CustomButton(
-                    buttonTitle: 'Continue',
+                    buttonTitle: bookState is AsyncLoading
+                        ? 'please wait..'
+                        : 'Continue',
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => OrderTrackingScreen(),
-                        ),
-                      );
+                      ref
+                          .read(bookControllerProvider.notifier)
+                          .createBooks(
+                            context: context,
+                            title: widget.bookTitle,
+                            dedication: widget.bookDedication,
+                            coverImage: widget.bookImage,
+                            volumeNumber: widget.bookVolume,
+                            questions:
+                                widget.questionList.map((e) => e.id!).toList(),
+                            answers: widget.questionList
+                                .expand((question) => question.answers!
+                                    .map((answer) => answer.id!))
+                                .toList(),
+                          )
+                          .then((_) => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OrderTrackingScreen(),
+                                ),
+                              ));
                     },
                   )
                 ],

@@ -188,96 +188,96 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
                       controller: titleController,
                       hintText: 'Book Title',
                     ),
-                    SizedBox(height: 20),
-                    InkWell(
-                      onTap: () {
-                        if (questionState is AsyncLoading) {
-                          _showLoadingSnackBar(context);
-                        } else if (questionState is AsyncError) {
-                          _showErrorSnackBar(
-                              context, questionState.error.toString());
-                        } else {
-                          _showQuestionSelection(
-                              context,
-                              titleController.text.isEmpty
-                                  ? 'Book Name'
-                                  : titleController.text);
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Color.fromRGBO(246, 246, 247, 1),
-                          ),
-                          child: TextField(
-                            scrollPadding: EdgeInsets.zero,
-                            decoration: InputDecoration(
-                              enabled: false,
-                              border: InputBorder.none,
-                              hintText: selectedQuestionsIds.isNotEmpty
-                                  ? '${selectedQuestionsIds.length} question(s) selected'
-                                  : 'Questions',
-                              hintStyle: TextStyle(
-                                fontFamily: 'PlusJakartaSans',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                color: Color.fromRGBO(41, 42, 44, 0.61),
-                              ),
-                              suffixIcon: Icon(
-                                Icons.keyboard_arrow_down,
-                                color: Color.fromRGBO(110, 109, 121, 1),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    InkWell(
-                      onTap: () {
-                        if (answerState is AsyncLoading) {
-                          _showLoadingSnackBar(context);
-                        } else if (answerState is AsyncError) {
-                          _showErrorSnackBar(
-                              context, answerState.error.toString());
-                        } else {
-                          _showAnsSelection(context);
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Color.fromRGBO(246, 246, 247, 1),
-                          ),
-                          child: TextField(
-                            scrollPadding: EdgeInsets.zero,
-                            decoration: InputDecoration(
-                              enabled: false,
-                              border: InputBorder.none,
-                              hintText: selectedAnswersIds.isNotEmpty
-                                  ? '${selectedAnswersIds.length} answer(s) selected'
-                                  : 'Answers',
-                              hintStyle: TextStyle(
-                                fontFamily: 'PlusJakartaSans',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                color: Color.fromRGBO(41, 42, 44, 0.61),
-                              ),
-                              suffixIcon: Icon(
-                                Icons.keyboard_arrow_down,
-                                color: Color.fromRGBO(110, 109, 121, 1),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // SizedBox(height: 20),
+                    // InkWell(
+                    //   onTap: () {
+                    //     if (questionState is AsyncLoading) {
+                    //       _showLoadingSnackBar(context);
+                    //     } else if (questionState is AsyncError) {
+                    //       _showErrorSnackBar(
+                    //           context, questionState.error.toString());
+                    //     } else {
+                    //       _showQuestionSelection(
+                    //           context,
+                    //           titleController.text.isEmpty
+                    //               ? 'Book Name'
+                    //               : titleController.text);
+                    //     }
+                    //   },
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(top: 10),
+                    //     child: Container(
+                    //       padding: EdgeInsets.symmetric(horizontal: 10),
+                    //       decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(8),
+                    //         color: Color.fromRGBO(246, 246, 247, 1),
+                    //       ),
+                    //       child: TextField(
+                    //         scrollPadding: EdgeInsets.zero,
+                    //         decoration: InputDecoration(
+                    //           enabled: false,
+                    //           border: InputBorder.none,
+                    //           hintText: selectedQuestionsIds.isNotEmpty
+                    //               ? '${selectedQuestionsIds.length} question(s) selected'
+                    //               : 'Questions',
+                    //           hintStyle: TextStyle(
+                    //             fontFamily: 'PlusJakartaSans',
+                    //             fontSize: 15,
+                    //             fontWeight: FontWeight.w400,
+                    //             color: Color.fromRGBO(41, 42, 44, 0.61),
+                    //           ),
+                    //           suffixIcon: Icon(
+                    //             Icons.keyboard_arrow_down,
+                    //             color: Color.fromRGBO(110, 109, 121, 1),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(height: 10),
+                    // InkWell(
+                    //   onTap: () {
+                    //     if (answerState is AsyncLoading) {
+                    //       _showLoadingSnackBar(context);
+                    //     } else if (answerState is AsyncError) {
+                    //       _showErrorSnackBar(
+                    //           context, answerState.error.toString());
+                    //     } else {
+                    //       _showAnsSelection(context);
+                    //     }
+                    //   },
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(top: 10),
+                    //     child: Container(
+                    //       padding: EdgeInsets.symmetric(horizontal: 10),
+                    //       decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(8),
+                    //         color: Color.fromRGBO(246, 246, 247, 1),
+                    //       ),
+                    //       child: TextField(
+                    //         scrollPadding: EdgeInsets.zero,
+                    //         decoration: InputDecoration(
+                    //           enabled: false,
+                    //           border: InputBorder.none,
+                    //           hintText: selectedAnswersIds.isNotEmpty
+                    //               ? '${selectedAnswersIds.length} answer(s) selected'
+                    //               : 'Answers',
+                    //           hintStyle: TextStyle(
+                    //             fontFamily: 'PlusJakartaSans',
+                    //             fontSize: 15,
+                    //             fontWeight: FontWeight.w400,
+                    //             color: Color.fromRGBO(41, 42, 44, 0.61),
+                    //           ),
+                    //           suffixIcon: Icon(
+                    //             Icons.keyboard_arrow_down,
+                    //             color: Color.fromRGBO(110, 109, 121, 1),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(height: 10),
                     CustomTextfield(
                       controller: dedicationController,
@@ -291,10 +291,12 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
                     ),
                     SizedBox(height: 60),
                     CustomButton(
-                      buttonTitle: bookState is AsyncLoading
-                          ? 'Creating book...'
-                          : 'Create',
-                      onTap: () => submitForm(),
+                      buttonTitle:
+                          // bookState is AsyncLoading
+                          //     ? 'Creating book...'
+                          //     :
+                          'Add Questions',
+                      onTap: () => _onNextPressed(context),
                     )
                   ],
                 ),
@@ -1039,32 +1041,35 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
   }
 
   Future<void> _onNextPressed(BuildContext context) async {
-    print(await context.read<BookRepo>().fetchAllBooks());
+    if (titleController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please input a title")),
+      );
+    } else if (dedicationController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please input a dedication")),
+      );
+    } else if (volumeController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please input a volume number")),
+      );
+    } else {
+      // ref.read(bookControllerProvider.notifier).createBooks(
+      //     context: context,
+      //     title: titleController.text,
+      //     dedication: dedicationController.text,
+      //     coverImage: _selectedImage!,
+      //     volumeNumber: int.parse(volumeController.text),
+      //     questions: selectedQuestionsIds,
+      //     answers: selectedAnswersIds);
 
-    if (titleController.text.isEmpty ||
-        dedicationController.text.isEmpty ||
-        volumeController.text.isEmpty ||
-        image == null ||
-        isLoading == true) {
-      return;
-    }
-
-    setState(() {
-      isLoading = true;
-    });
-    final String imageUrl = await _uploadImageAndGetUrl();
-    setState(() {
-      isLoading = false;
-    });
-
-    if (context.mounted) {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => ChooseBookNameScreen(
             bookTitle: titleController.text,
             bookDedication: dedicationController.text,
-            bookImageUrl: imageUrl,
+            bookImage: _selectedImage!,
             bookVolume: int.parse(volumeController.text),
           ),
         ),

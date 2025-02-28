@@ -326,7 +326,8 @@ class _BuildFamilyScreenState extends ConsumerState<BuildFamilyScreen> {
                                                                       .profileImage !=
                                                                   null
                                                               ? Image.network(family
-                                                                  .profileImage!)
+                                                                  .profileImage!
+                                                                  .url!)
                                                               : Image.asset(
                                                                   'assets/images/user.png')),
                                                       SizedBox(width: 8),
