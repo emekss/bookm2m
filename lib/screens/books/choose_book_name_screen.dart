@@ -126,9 +126,9 @@ class _ChooseBookNameScreenState extends ConsumerState<ChooseBookNameScreen> {
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children:[
                             CustomText(
-                              text: 'Book Name',
+                              text: '${widget.bookTitle}',
                               fontSize: 22,
                               fontWeight: FontWeight.w500,
                               color: Color.fromRGBO(53, 49, 45, 1),

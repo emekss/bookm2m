@@ -13,12 +13,16 @@ import 'package:svg_flutter/svg.dart';
 import '../../models/questions.dart';
 
 class OrderPageScreen extends StatefulWidget {
-  const OrderPageScreen({super.key, required this.questionList, required this.bookTitle,
+  const OrderPageScreen({
+    super.key,
+    required this.questionList,
+    required this.bookTitle,
     required this.bookDedication,
     required this.bookVolume,
-    required this.bookImage,});
+    required this.bookImage,
+  });
 
-    final List<Questions> questionList;
+  final List<Questions> questionList;
   final String bookTitle;
   final String bookDedication;
   final int bookVolume;
@@ -257,14 +261,14 @@ class _OrderPageScreenState extends State<OrderPageScreen> {
                         context: context,
                         backgroundColor: Colors.transparent,
                         builder: (context) => ApplePayBottomSheet(
-                          bookTitle: "Book Title goes here",
+                          bookTitle: "${widget.bookTitle}",
                           price: "13.42",
                           email: "subs@mail.com",
                           questionList: widget.questionList,
-                              bookTitles: widget.bookTitle,
-                              bookDedication: widget.bookDedication,
-                              bookVolume: widget.bookVolume,
-                              bookImage: widget.bookImage,
+                          bookTitles: widget.bookTitle,
+                          bookDedication: widget.bookDedication,
+                          bookVolume: widget.bookVolume,
+                          bookImage: widget.bookImage,
                           onCancel: () => Navigator.pop(context),
                         ),
                       );

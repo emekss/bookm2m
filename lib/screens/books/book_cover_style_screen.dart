@@ -114,12 +114,12 @@ class _BookCoverStyleScreenState extends State<BookCoverStyleScreen> {
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CustomText(
-                              text: 'Book Title Here',
+                              text: '${widget.bookTitle}',
                               fontSize: 22,
                               fontWeight: FontWeight.w500,
                               color: Color.fromRGBO(53, 49, 45, 1),

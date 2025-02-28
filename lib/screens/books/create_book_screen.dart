@@ -281,7 +281,7 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
                     SizedBox(height: 10),
                     CustomTextfield(
                       controller: dedicationController,
-                      hintText: 'Dedication of Name of Person',
+                      hintText: 'Dedication or Name of Person',
                     ),
                     SizedBox(height: 20),
                     CustomTextfield(
