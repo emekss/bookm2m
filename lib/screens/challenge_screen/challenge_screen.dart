@@ -312,7 +312,7 @@ class _ChallengeScreenState extends ConsumerState<ChallengeScreen> {
                                                 SizedBox(height: 2),
                                                 CustomText(
                                                   text:
-                                                      'Challenge Details goes here \nand this is line two',
+                                                      '${challenge.description}',
                                                   color: Color.fromRGBO(
                                                       53, 49, 45, 1),
                                                   fontWeight: FontWeight.w400,
