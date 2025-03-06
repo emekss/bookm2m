@@ -310,7 +310,7 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                                                       const SizedBox(height: 4),
                                                       CustomText(
                                                         text:
-                                                            '${question.help}',
+                                                            '${question.prompt}',
                                                         fontSize: 15,
                                                         fontWeight:
                                                             FontWeight.w400,
@@ -439,7 +439,6 @@ class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                                                                     .read(questionsControllerProvider
                                                                         .notifier)
                                                                     .deleteQuestion(
-                                                                       
                                                                         question
                                                                             .id!);
 

@@ -4,14 +4,12 @@ import 'package:book_app_m2m/components/custom_button.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:book_app_m2m/components/custom_textfield.dart';
 import 'package:book_app_m2m/screens/books/choose_book_name_screen.dart';
-import 'package:book_app_m2m/services/book_repo.dart';
 import 'package:dashed_rect/dashed_rect.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 import 'package:svg_flutter/svg.dart';
 
 import '../../api/answer/answer_controller.dart';
@@ -1052,6 +1050,10 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
     } else if (volumeController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please input a volume number")),
+      );
+    } else if (_selectedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please pick an image")),
       );
     } else {
       // ref.read(bookControllerProvider.notifier).createBooks(

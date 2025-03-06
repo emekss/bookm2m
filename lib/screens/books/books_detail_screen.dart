@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:book_app_m2m/screens/assets/assets_screen.dart';
 import 'package:book_app_m2m/screens/auth/sign_in_screen.dart';
 import 'package:book_app_m2m/screens/books/view_books_screen.dart';
@@ -6,9 +9,13 @@ import 'package:book_app_m2m/screens/family/build_family_screen.dart';
 import 'package:book_app_m2m/screens/profile/profile_screen.dart';
 import 'package:book_app_m2m/screens/question/answer_screen.dart';
 import 'package:book_app_m2m/screens/question/question_screen.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:book_app_m2m/components/custom_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:svg_flutter/svg.dart';
 
 import '../../api/book/book_controller.dart';
@@ -25,6 +32,52 @@ class BooksDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _BooksDetailScreenState extends ConsumerState<BooksDetailScreen> {
+  double _progress = 0.0; // Tracks download progress
+  bool _isDownloading = false; // Tracks download state
+
+  Future<void> _downloadFile(String url, String fileName) async {
+    try {
+      if (await _requestPermission()) {
+        setState(() {
+          _isDownloading = true;
+          _progress = 0.0;
+        });
+
+        Directory directory = await getApplicationDocumentsDirectory();
+        String filePath = "${directory.path}/$fileName";
+
+        Dio dio = Dio();
+        await dio.download(url, filePath, onReceiveProgress: (count, total) {
+          setState(() {
+            _progress = count / total;
+          });
+        });
+
+        setState(() {
+          _isDownloading = false;
+        });
+
+        // Open the downloaded file
+        OpenFilex.open(filePath);
+      } else {
+        print("Storage permission denied");
+      }
+    } catch (e) {
+      print("Download failed: $e");
+      setState(() {
+        _isDownloading = false;
+      });
+    }
+  }
+
+  Future<bool> _requestPermission() async {
+    if (Platform.isAndroid) {
+      var status = await Permission.storage.request();
+      return status.isGranted;
+    }
+    return true;
+  }
+
   String? selectedValue;
   bool isDropdownOpen = false;
   @override
@@ -385,7 +438,7 @@ class _BooksDetailScreenState extends ConsumerState<BooksDetailScreen> {
                                       //     ? book.questions!
                                       //         .contains('answers') ? ''
                                       //     :
-                                      '17',
+                                      '0',
                                   color: Color.fromRGBO(53, 49, 45, 1),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -433,29 +486,43 @@ class _BooksDetailScreenState extends ConsumerState<BooksDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            color: const Color.fromRGBO(67, 184, 136, 1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.file_download_outlined,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(width: 10),
-                                CustomText(
-                                  text: 'Download PDF',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
-                                ),
-                              ],
+                        GestureDetector(
+                          onTap: () {
+                            _downloadFile(
+                              book.coverImage!
+                                  .url!, // Replace with actual file URL
+                              book.coverImage!.url!.split('/').last,
+                            );
+                            // print(
+                            //   book.coverImage!.url!.split('/').last,
+                            // );
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            decoration: BoxDecoration(
+                              color: const Color.fromRGBO(67, 184, 136, 1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.file_download_outlined,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  CustomText(
+                                    text: _isDownloading
+                                        ? "Downloading... ${(_progress * 100).toStringAsFixed(0)}%"
+                                        : 'Download PDF',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

@@ -200,10 +200,7 @@ class _OrderConfirmedScreenState extends ConsumerState<OrderConfirmedScreen> {
                               questions: widget.questionList
                                   .map((e) => e.id!)
                                   .toList(),
-                              answers: widget.questionList
-                                  .expand((question) => question.answers!
-                                      .map((answer) => answer.id!))
-                                  .toList(),
+                              answers: [],
                             )
                             .then((_) => Navigator.push(
                                   context,
@@ -223,10 +220,7 @@ class _OrderConfirmedScreenState extends ConsumerState<OrderConfirmedScreen> {
                               questions: widget.questionList
                                   .map((e) => e.id!)
                                   .toList(),
-                              answers: widget.questionList
-                                  .expand((question) => question.answers!
-                                      .map((answer) => answer.id!))
-                                  .toList(),
+                              answers: [],
                             )
                             .then((_) => Navigator.push(
                                   context,

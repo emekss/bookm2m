@@ -3,7 +3,6 @@ import 'package:book_app_m2m/widgets/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../models/asset.dart';
 import '../../models/questions.dart';
 import '../asset/asset_controller.dart';
 
@@ -14,6 +13,7 @@ class QuestionsController extends StateNotifier<AsyncValue<List<Questions>>> {
   }
 
   List<Questions> _allQuestions = [];
+  String? _selectedTopic;
 
   /// Fetch all questions
   Future<void> fetchQuestions() async {
@@ -108,6 +108,19 @@ class QuestionsController extends StateNotifier<AsyncValue<List<Questions>>> {
           .where((q) => q.prompt!.toLowerCase().contains(query.toLowerCase()))
           .toList();
       state = AsyncValue.data(filteredQuestions);
+    }
+  }
+
+   void filterQuestionsByTopic(String topicName) {
+    _selectedTopic = topicName;
+
+    if (topicName.toLowerCase() == "all") {
+      state = AsyncValue.data(_allQuestions);
+    } else {
+      final filtered = _allQuestions
+          .where((q) => q.topic?.name?.toLowerCase() == topicName.toLowerCase())
+          .toList();
+      state = AsyncValue.data(filtered);
     }
   }
 }

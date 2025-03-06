@@ -195,7 +195,7 @@ class _ChallengeScreenState extends ConsumerState<ChallengeScreen> {
                 ),
               ),
               child: SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
@@ -256,7 +256,7 @@ class _ChallengeScreenState extends ConsumerState<ChallengeScreen> {
                                 child: ListView.builder(
                                   itemCount: challenges.length,
                                   shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
+                                  physics: const BouncingScrollPhysics(),
                                   itemBuilder: (context, index) {
                                     final challenge = challenges[index];
                                     return Padding(
@@ -311,6 +311,14 @@ class _ChallengeScreenState extends ConsumerState<ChallengeScreen> {
                                                 ),
                                                 SizedBox(height: 2),
                                                 CustomText(
+                                                  text: '${challenge.title}',
+                                                  color: Color.fromRGBO(
+                                                      53, 49, 45, 1),
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 13,
+                                                ),
+                                                SizedBox(height: 2),
+                                                CustomText(
                                                   text:
                                                       '${challenge.description}',
                                                   color: Color.fromRGBO(
@@ -318,7 +326,7 @@ class _ChallengeScreenState extends ConsumerState<ChallengeScreen> {
                                                   fontWeight: FontWeight.w400,
                                                   fontSize: 13,
                                                 ),
-                                                SizedBox(height: 8),
+                                                SizedBox(height: 5),
                                                 Row(
                                                   children: [
                                                     CustomText(
@@ -376,7 +384,7 @@ class _ChallengeScreenState extends ConsumerState<ChallengeScreen> {
                             const Center(child: CupertinoActivityIndicator()),
                         error: (e, _) => Center(child: Text("Error: $e")),
                       ),
-                      const SizedBox(height: 34),
+                      const SizedBox(height: 50),
                     ],
                   ),
                 ),

@@ -15,6 +15,7 @@ class ChallengeController extends StateNotifier<AsyncValue<List<Challenges>>> {
   }
 
   List<Challenges> _allChallenges = [];
+    String? _selectedType;
 
   /// Fetch all questions
   Future<void> fetchChallenges() async {
@@ -134,6 +135,19 @@ class ChallengeController extends StateNotifier<AsyncValue<List<Challenges>>> {
       state = AsyncValue.data(filteredQuestions);
     }
   }
+
+  // void filterChallengesByType(String type) {
+  //   _selectedType = type;
+
+  //   if (type.toLowerCase() == "all") {
+  //     state = AsyncValue.data(_allChallenges);
+  //   } else {
+  //     final filtered = _allChallenges
+  //         .where((q) => q. .topic?.name?.toLowerCase() == topicName.toLowerCase())
+  //         .toList();
+  //     state = AsyncValue.data(filtered);
+  //   }
+  // }
 }
 
 // Provider for QuestionsController
